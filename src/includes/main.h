@@ -7,6 +7,9 @@
 #define MINORV 1
 
 #define CRED  "\x1b[31m"
+#define CGREN "\x1b[32m"
+#define CYELL "\x1b[33m"
+#define CBLUE "\x1b[36m"
 #define CRSET "\x1b[0m"
 
 #define ROOM 16 // World Size
@@ -21,6 +24,7 @@
 #include <time.h>
 #include <errno.h>
 
+#include "linkedlst.h"
 #include "structs.h"
 #include "util.h"
 #include "world.h"

@@ -13,37 +13,95 @@ Room *initRoom(void) {
 		room[i].whell  = false;
 		room[i].brisa  = false;
 		room[i].gold   = false;
-		room[i].reluz  = false;
 		room[i].limit  = false;
 	}
 
 	return room;
 }
 
+int excluded(List *list, int key) {
+	if (lstnil(list)) return 0;
+	Node *ptr = list->head;
+	while (ptr != NULL) {
+		if (ptr->key == key)
+			return 1;
+		ptr = ptr->next;
+	}
+	return 0;
+}
+
 void genWorld(int **world,Room *wroom) {
-	int whell = 0;
+	int qty,whell,gold,wumpus;
+	List *exclude = iniLst();
+	pshLst(exclude,0);
+	pshLst(exclude,1);
+	pshLst(exclude,WCOL);
+	pshLst(exclude,WCOL+1);
 
-	while (whell != 3) {
-
+	qty = 0;
+	while (qty != 1) {
+		wumpus = randonum(0,ROOM-1);
+		if (!excluded(exclude,wumpus)) {
+			wroom[wumpus].wumpus = true;
+			for (int i=0; i < ROOM; i++)
+				if (world[wumpus][i])
+					wroom[i].fedor = true;
+			qty++;
+		}
 	}
 
-	int wumpus = randonum(0,ROOM-1);
-	wroom[wumpus].wumpus = true;
-	for (int i=0; i < ROOM; i++)
-		if (world[wumpus][i])
-			wroom[i].fedor = true;
+	qty = 0;
+	while (qty != 3) {
+		whell = randonum(0,ROOM-1);
+		if (!excluded(exclude,whell)) {
+			wroom[whell].whell = true;
+			for (int i=0; i < ROOM; i++)
+				if (world[whell][i])
+					wroom[i].brisa = true;
+			pshLst(exclude,whell);
+			qty++;
+		}
+	}
+
+	qty = 0;
+	while (qty != 1) {
+		gold = randonum(0,ROOM-1);
+		if (!excluded(exclude,gold)) {
+			wroom[gold].gold = true;
+			qty++;
+		}
+	}
+
+	#ifdef DEBUG
+	prtLst(exclude);
+	#endif
+
+	clrLst(exclude);
+}
+
+void prtwchar(bool cond, char *str) {
+	switch (cond) {
+	case true:
+		printf("%s", str);
+		break;
+	
+	default:
+		printf("\u2500");
+		break;
+	}
+
 }
 
 void prtWorld(Room *room) {
 	int barran = 0;
 	for (int i=0; i < ROOM; i++) {
-		if (room[i].wumpus)
-			printf(" W");
-		else if (room[i].fedor)
-			printf(" F");
-		else
-			printf(" 0");
-		
+		prtwchar(room[i].wumpus,CRED"W"CRSET);
+		prtwchar(room[i].fedor, CRED"F"CRSET);
+		prtwchar(room[i].whell,CBLUE"P"CRSET);
+		prtwchar(room[i].brisa,CBLUE"B"CRSET);
+		prtwchar(room[i].gold, CYELL"G"CRSET);
+		printf(" ");
+
 		barran++;
 		if (barran == WCOL) {
 			barran = 0;

@@ -6,7 +6,7 @@ typedef struct agent_t {
 	bool grito;
 	bool coord;
 	bool limit;
-} Sensor;
+} Agent;
 
 typedef struct room_t {
 	bool wumpus;

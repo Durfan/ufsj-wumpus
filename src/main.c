@@ -12,8 +12,10 @@ int main(void) {
 	
 	prtWorld(wroom);
 
+	#ifdef DEBUG
 	prtGraph(world);
 	prtAdjac(world);
+	#endif
 
 	freeArray(ROOM,world);
 	free(wroom);

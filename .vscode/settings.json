@@ -1,6 +1,7 @@
 {
 	"files.associations": {
 		"main.h": "c",
-		"array": "c"
+		"array": "c",
+		"linkedlst.h": "c"
 	}
 }
