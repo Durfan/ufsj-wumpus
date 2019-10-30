@@ -1,22 +1,27 @@
 #ifndef INCLUDE_STRUCTS_H
 #define INCLUDE_STRUCTS_H
 
+typedef struct agent_t {
+	bool arrow;
+	bool grito;
+	bool coord;
+	bool limit;
+} Sensor;
+
 typedef struct room_t {
 	bool wumpus;
 	bool fedor;
 	bool whell;
 	bool brisa;
 	bool gold;
-	bool reluz;
 	bool limit;
 } Room;
 
 typedef struct sensor_t {
 	bool fedor;
 	bool brisa;
-	bool reluz;
+	bool gold;
 	bool limit;
-	bool grito;
 } Sensor;
 
 //#pragma message __FILE__

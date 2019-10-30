@@ -21,6 +21,12 @@ Room *initRoom(void) {
 }
 
 void genWorld(int **world,Room *wroom) {
+	int whell = 0;
+
+	while (whell != 3) {
+
+	}
+
 	int wumpus = randonum(0,ROOM-1);
 	wroom[wumpus].wumpus = true;
 	for (int i=0; i < ROOM; i++)
