@@ -10,7 +10,8 @@
 #define CRSET "\x1b[0m"
 
 #define ROOMS 16 // World Size
-#define WSIZE 4
+#define WCOLS 4
+#define WROWS 4
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,21 +21,26 @@
 #include <time.h>
 #include <errno.h>
 
-int g_world[ROOMS][ROOMS];
-int g_knowB[ROOMS][ROOMS];
-
-typedef struct sensor_t {
+typedef struct room_t {
+	bool wumpus;
 	bool fedor;
+	bool whell;
 	bool brisa;
+	bool gold;
 	bool reluz;
 	bool limit;
-	bool grito;
-} Sensor;
+} Rooms;
 
 #include "util.h"
 #include "world.h"
 #include "agent.h"
 #include "sensor.h"
+
+
+
+int g_world[ROOMS][ROOMS];
+int g_knowB[ROOMS][ROOMS];
+Rooms g_wroom[ROOMS];
 
 //#pragma message __FILE__
 #endif // INCLUDE_MAIN_H

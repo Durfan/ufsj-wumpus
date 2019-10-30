@@ -3,6 +3,7 @@
 
 void genWorld(void);
 void prtWorld(void);
+void prtGraph(void);
 void prtAdjac(void);
 
 //#pragma message __FILE__

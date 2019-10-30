@@ -6,10 +6,11 @@ int main(void) {
 	srand(time(NULL));
 
 	iniStructs();
-	//genWorld();
+	genWorld();
 
 	prtWorld();
-	prtAdjac();
+	//prtGraph();
+	//prtAdjac();
 
 	return EXIT_SUCCESS;
 }

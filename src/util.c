@@ -5,16 +5,15 @@ void iniStructs(void) {
 	memset(g_knowB,0,sizeof g_knowB);
 
 	int i;
-	for (int r=0; r < WSIZE; r++) {
-		for (int c=0; c < WSIZE; c++) {
-			i = r * WSIZE + c;
-			if (c > 0) 
+	for (int r=0; r < WROWS; r++) {
+		for (int c=0; c < WCOLS; c++) {
+			i = r * WCOLS + c;
+			if (c > 0) // Two inner diagonals
 				g_world[i-1][i] = g_world[i][i-1] = 1;
-			if (r > 0)
-				g_world[i-WSIZE][i] = g_world[i][i-WSIZE] = 1;
+			if (r > 0) // Two outer diagonals
+				g_world[i-WCOLS][i] = g_world[i][i-WCOLS] = 1;
 		}
 	}
-
 }
 
 int rndInt(int low, int high) {
