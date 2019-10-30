@@ -1,44 +1,64 @@
 #include "includes/main.h"
 
-void genWorld(void) {
-	int wumpus = rndInt(0,ROOMS-1);
-	g_wroom[wumpus].wumpus = true;
-	for (int i=0; i < ROOMS; i++)
-		if (g_world[wumpus][i])
-			g_wroom[i].fedor = true;
+Room *initRoom(void) {
+	Room *room = malloc(ROOM * sizeof(Room));
+	if (room == NULL) {
+		perror(PROGRAM);
+		exit(EXIT_FAILURE);
+	}
+
+	for (int i=0; i < ROOM; i++) {
+		room[i].wumpus = false;
+		room[i].fedor  = false;
+		room[i].whell  = false;
+		room[i].brisa  = false;
+		room[i].gold   = false;
+		room[i].reluz  = false;
+		room[i].limit  = false;
+	}
+
+	return room;
 }
 
-void prtWorld(void) {
+void genWorld(int **world,Room *wroom) {
+	int wumpus = randonum(0,ROOM-1);
+	wroom[wumpus].wumpus = true;
+	for (int i=0; i < ROOM; i++)
+		if (world[wumpus][i])
+			wroom[i].fedor = true;
+}
+
+void prtWorld(Room *room) {
 	int barran = 0;
-	for (int i=0; i < ROOMS; i++) {
-		if (g_wroom[i].wumpus)
+	for (int i=0; i < ROOM; i++) {
+		if (room[i].wumpus)
 			printf(" W");
-		else if (g_wroom[i].fedor)
+		else if (room[i].fedor)
 			printf(" F");
 		else
 			printf(" 0");
 		
 		barran++;
-		if (barran == WCOLS) {
+		if (barran == WCOL) {
 			barran = 0;
 			putchar(0x0A);
 		}
 	}
 }
 
-void prtGraph(void) {
-	for (int i=0; i < ROOMS; i++) {
-		for (int j=0; j < ROOMS; j++)
-			printf(" %d", g_world[i][j]);
+void prtGraph(int **array) {
+	for (int i=0; i < ROOM; i++) {
+		for (int j=0; j < ROOM; j++)
+			printf(" %d", array[i][j]);
 		putchar(0x0A);
 	}
 }
 
-void prtAdjac(void) {
-	for (int i=0; i < ROOMS; i++) {
+void prtAdjac(int **array) {
+	for (int i=0; i < ROOM; i++) {
 		printf(" %d: ", i);
-		for (int j=0; j < ROOMS; j++)
-			if (g_world[i][j])
+		for (int j=0; j < ROOM; j++)
+			if (array[i][j])
 				printf(" %d", j);
 		putchar(0x0A);
 	}

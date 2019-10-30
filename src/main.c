@@ -5,12 +5,18 @@ int main(void) {
 	setlocale(LC_ALL,"");
 	srand(time(NULL));
 
-	iniStructs();
-	genWorld();
+	Room *wroom = initRoom();
+	int **world = alocArray(ROOM,ROOM);
+	iniGraph(world);
+	genWorld(world,wroom);
+	
+	prtWorld(wroom);
 
-	prtWorld();
-	//prtGraph();
-	//prtAdjac();
+	prtGraph(world);
+	prtAdjac(world);
+
+	freeArray(ROOM,world);
+	free(wroom);
 
 	return EXIT_SUCCESS;
 }
