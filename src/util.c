@@ -29,6 +29,13 @@ void iniGraph(int **array) {
 	}
 }
 
+void setVgrau(int **array, Room *room) {
+	for (int i=0; i < ROOM; i++)
+		for (int j=0; j < ROOM; j++)
+			if (array[i][j])
+				room[i].grau++;
+}
+
 int randonum(int low, int high) {
 	double d = (double)rand() / ((double)RAND_MAX + 1);
 	int k = d * (high - low + 1);

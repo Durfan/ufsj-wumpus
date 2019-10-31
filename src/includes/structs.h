@@ -9,6 +9,8 @@ typedef struct agent_t {
 } Agent;
 
 typedef struct room_t {
+	int id;
+	int grau;
 	bool wumpus;
 	bool fedor;
 	bool whell;

@@ -4,6 +4,7 @@
 		"array": "c",
 		"linkedlst.h": "c",
 		"raylib.h": "c",
-		"raygui.h": "c"
+		"raygui.h": "c",
+		"cmath": "c"
 	}
 }

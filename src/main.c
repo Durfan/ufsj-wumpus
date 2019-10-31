@@ -1,25 +1,23 @@
 #include "includes/main.h"
-#include "includes/raylib.h"
+#include <raylib.h>
 
 int main(void) {
 
 	setlocale(LC_ALL,"");
 	srand(time(NULL));
-	const int screenWidth = 320;
-	const int screenHeight = 240;
-	InitWindow(screenWidth, screenHeight, "World of Wumpus Reloaded");
+	InitWindow(320,240,"World of Wumpus Reloaded");
 	InitAudioDevice();
 
 	Music music = LoadMusicStream("resources/metalgear.ogg");
 	PlayMusicStream(music);
 
 	Vector2 position;
-	Texture2D agent  = LoadTexture("resources/agent.png");
-	Texture2D floor  = LoadTexture("resources/floor.png");
-	Texture2D trap   = LoadTexture("resources/trap.png");
-	Texture2D strap  = LoadTexture("resources/strap.png");
-	Texture2D wumpus = LoadTexture("resources/wumpus.png");
-	Texture2D chest  = LoadTexture("resources/chest.png");
+	Texture2D tex_agent  = LoadTexture("resources/agent.png");
+	Texture2D tex_floor  = LoadTexture("resources/floor.png");
+	Texture2D tex_trap   = LoadTexture("resources/trap.png");
+	Texture2D tex_strap  = LoadTexture("resources/strap.png");
+	Texture2D tex_wumpus = LoadTexture("resources/wumpus.png");
+	Texture2D tex_chest  = LoadTexture("resources/chest.png");
 
 	Rectangle frameRec = {   0, 0, 32, 32 };
 	Rectangle wborder  = {  20,60,128,128 };
@@ -44,9 +42,11 @@ int main(void) {
 	int **world = alocArray(ROOM,ROOM);
 	iniGraph(world);
 	genWorld(world,wroom);
+	setVgrau(world,wroom);
+
+	Agent *agent = iniAgent();
 
 	#ifdef DEBUG
-	prtWorld(wroom);
 	prtGraph(world);
 	prtAdjac(world);
 	#endif
@@ -61,7 +61,7 @@ int main(void) {
 			currentFrame++;
 			if (currentFrame > 5)
 				currentFrame = 0;
-			frameRec.x = (float)currentFrame*(float)agent.width/2;
+			frameRec.x = (float)currentFrame*(float)tex_agent.width/2;
 		}
 
 		// Draw
@@ -79,27 +79,30 @@ int main(void) {
 			if (IsKeyPressed(KEY_R))
 				rstWorld(world,wroom);
 
+			if (IsKeyPressed(KEY_SPACE))
+				rstWorld(world,wroom);
+
 			for (int i = 0; i < ROOM; i++) {
-				DrawTexture(floor, arooms[i].x, arooms[i].y, WHITE);
+				DrawTexture(tex_floor, arooms[i].x, arooms[i].y, WHITE);
 				position.x = arooms[0].x;
 				position.y = arooms[0].y;
-				DrawTextureRec(agent,frameRec,position,WHITE);
+				DrawTextureRec(tex_agent,frameRec,position,WHITE);
 			}
 
 			for (int i = 0; i < ROOM; i++) {
-				DrawTexture(floor, wrooms[i].x, wrooms[i].y, WHITE);
+				DrawTexture(tex_floor, wrooms[i].x, wrooms[i].y, WHITE);
 				if (wroom[i].gold)
-					DrawTexture(chest, wrooms[i].x, wrooms[i].y, WHITE);
+					DrawTexture(tex_chest, wrooms[i].x, wrooms[i].y, WHITE);
 				if (wroom[i].whell) {
 					position.x = wrooms[i].x;
 					position.y = wrooms[i].y;
-					DrawTextureRec(strap,frameRec,position,WHITE);
-					//DrawTexture(trap, wrooms[i].x, wrooms[i].y, WHITE);
+					DrawTextureRec(tex_strap,frameRec,position,WHITE);
+					//DrawTexture(tex_trap, wrooms[i].x, wrooms[i].y, WHITE);
 				}
 				if (wroom[i].wumpus) {
 					position.x = wrooms[i].x;
 					position.y = wrooms[i].y;
-					DrawTextureRec(wumpus,frameRec,position,WHITE);
+					DrawTextureRec(tex_wumpus,frameRec,position,WHITE);
 				}
 			}
 
@@ -112,13 +115,16 @@ int main(void) {
 	// De-Initialization
 	freeArray(ROOM,world);
 	free(wroom);
-	UnloadTexture(chest);
-	UnloadTexture(wumpus);
-	UnloadTexture(trap);
-	UnloadTexture(strap);
-	UnloadTexture(floor);
-	UnloadTexture(agent);
+	free(agent);
+
+	UnloadTexture(tex_chest);
+	UnloadTexture(tex_wumpus);
+	UnloadTexture(tex_trap);
+	UnloadTexture(tex_strap);
+	UnloadTexture(tex_floor);
+	UnloadTexture(tex_agent);
 	UnloadMusicStream(music);
+
 	CloseAudioDevice();
 	CloseWindow();
 

@@ -8,6 +8,8 @@ Room *initRoom(void) {
 	}
 
 	for (int i=0; i < ROOM; i++) {
+		room[i].id = i;
+		room[i].grau = 0;
 		room[i].wumpus = false;
 		room[i].fedor  = false;
 		room[i].whell  = false;
@@ -85,6 +87,7 @@ void genWorld(int **world, Room *wroom) {
 	}
 
 	#ifdef DEBUG
+	prtWorld(wroom);
 	prtLst(exclude);
 	#endif
 
@@ -112,7 +115,7 @@ void prtWorld(Room *room) {
 		prtwchar(room[i].whell,CBLUE"P"CRSET);
 		prtwchar(room[i].brisa,CBLUE"B"CRSET);
 		prtwchar(room[i].gold, CYELL"G"CRSET);
-		printf(" ");
+		printf(":%d ", room[i].grau);
 
 		barran++;
 		if (barran == WCOL) {
