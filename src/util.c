@@ -36,12 +36,6 @@ void setVgrau(int **array, Room *room) {
 				room[i].grau++;
 }
 
-int randonum(int low, int high) {
-	double d = (double)rand() / ((double)RAND_MAX + 1);
-	int k = d * (high - low + 1);
-	return low + k;
-}
-
 void freeArray(int n, int **ptr) {
 	for (int i=0 ; i<n ; i++)
 		free(ptr[i]);

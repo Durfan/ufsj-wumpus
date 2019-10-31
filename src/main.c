@@ -1,5 +1,4 @@
 #include "includes/main.h"
-#include <raylib.h>
 
 int main(void) {
 
@@ -18,10 +17,12 @@ int main(void) {
 	Texture2D tex_strap  = LoadTexture("resources/strap.png");
 	Texture2D tex_wumpus = LoadTexture("resources/wumpus.png");
 	Texture2D tex_chest  = LoadTexture("resources/chest.png");
+	Texture2D tex_gold   = LoadTexture("resources/gold.png");
 
-	Rectangle frameRec = {   0, 0, 32, 32 };
-	Rectangle wborder  = {  20,60,128,128 };
-	Rectangle aborder  = { 168,60,128,128 };
+	Rectangle frmRecS = {   0, 0, 32, 32 };
+	Rectangle frmRecO = {   0, 0, 32, 32 };
+	Rectangle wborder = {  20,60,128,128 };
+	Rectangle aborder = { 168,60,128,128 };
 
 	Rectangle arooms[ROOM] = { 0 };
 	Rectangle wrooms[ROOM] = { 0 };
@@ -45,7 +46,11 @@ int main(void) {
 	setVgrau(world,wroom);
 
 	Agent *agent = iniAgent();
+	Room *aroom = initRoom();
+	int **bknow = alocArray(ROOM,ROOM);
+	agent->coord = 0;
 	Sensor sensor;
+	int posagent;
 
 	#ifdef DEBUG
 	prtGraph(world);
@@ -62,8 +67,18 @@ int main(void) {
 			currentFrame++;
 			if (currentFrame > 5)
 				currentFrame = 0;
-			frameRec.x = (float)currentFrame*(float)tex_agent.width/2;
+			frmRecS.x = currentFrame * 32;
+			frmRecO.x = (currentFrame/2) * 32;
 		}
+
+		posagent = getpos(agent);
+		if (wasted(agent,wroom)) {
+			StopMusicStream(music);
+			DrawText("WASTED", 210, 20, 20, RED);
+		}
+
+		sensor = scanQuad(agent,wroom);
+		scanPath(agent,world,bknow);
 
 		// Draw
 		BeginDrawing();
@@ -72,39 +87,47 @@ int main(void) {
 
 			UpdateMusicStream(music);
 
-			DrawText("Score 0", 20, 20, 20, DARKGRAY);
+			DrawText(FormatText("Score %05d", agent->score), 20, 20, 20, DARKGRAY);
 			DrawText("Aperte r para resetar", 20, 205, 10, DARKGRAY);
-			DrawText("Aperte spacebar para começar", 20, 215, 10, DARKGRAY);
+			DrawText("Aperte [spacebar] para avançar", 20, 215, 10, DARKGRAY);
+
+			showInfos(sensor);
 
 			if (IsKeyPressed(KEY_R))
 				rstWorld(world,wroom);
 
 			if (IsKeyPressed(KEY_SPACE)) {
-				sensor = scanRoom(agent,wroom);
-				prtSensor(sensor);
+				leapofaith(agent,world);
 			}
 
 			for (int i = 0; i < ROOM; i++) {
 				DrawTexture(tex_floor, arooms[i].x, arooms[i].y, WHITE);
-				position.x = arooms[0].x;
-				position.y = arooms[0].y;
-				DrawTextureRec(tex_agent,frameRec,position,WHITE);
+				position.x = arooms[posagent].x;
+				position.y = arooms[posagent].y;
+				DrawTextureRec(tex_agent,frmRecS,position,WHITE);
 			}
 
 			for (int i = 0; i < ROOM; i++) {
 				DrawTexture(tex_floor, wrooms[i].x, wrooms[i].y, WHITE);
-				if (wroom[i].gold)
-					DrawTexture(tex_chest, wrooms[i].x, wrooms[i].y, WHITE);
+				position.x = wrooms[posagent].x;
+				position.y = wrooms[posagent].y;
+				DrawTextureRec(tex_agent,frmRecS,position,WHITE);
+				if (wroom[i].gold) {
+					position.x = wrooms[i].x;
+					position.y = wrooms[i].y;
+					DrawTextureRec(tex_gold,frmRecO,position,WHITE);
+					//DrawTexture(tex_chest, wrooms[i].x, wrooms[i].y, WHITE);
+				}
 				if (wroom[i].whell) {
 					position.x = wrooms[i].x;
 					position.y = wrooms[i].y;
-					DrawTextureRec(tex_strap,frameRec,position,WHITE);
+					DrawTextureRec(tex_strap,frmRecO,position,WHITE);
 					//DrawTexture(tex_trap, wrooms[i].x, wrooms[i].y, WHITE);
 				}
 				if (wroom[i].wumpus) {
 					position.x = wrooms[i].x;
 					position.y = wrooms[i].y;
-					DrawTextureRec(tex_wumpus,frameRec,position,WHITE);
+					DrawTextureRec(tex_wumpus,frmRecS,position,WHITE);
 				}
 			}
 
@@ -116,15 +139,19 @@ int main(void) {
 
 	// De-Initialization
 	freeArray(ROOM,world);
+	freeArray(ROOM,bknow);
 	free(wroom);
+	free(aroom);
 	free(agent);
 
+	UnloadTexture(tex_gold);
 	UnloadTexture(tex_chest);
 	UnloadTexture(tex_wumpus);
 	UnloadTexture(tex_trap);
 	UnloadTexture(tex_strap);
 	UnloadTexture(tex_floor);
 	UnloadTexture(tex_agent);
+
 	UnloadMusicStream(music);
 
 	CloseAudioDevice();

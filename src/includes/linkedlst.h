@@ -12,6 +12,7 @@ typedef struct list_t {
 } List;
 
 List *iniLst(void);
+int lstidx(List *list, int index);
 void pshLst(List *list, int key);
 void prtLst(List *list);
 void clrLst(List *list);

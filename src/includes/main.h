@@ -23,13 +23,13 @@
 #include <locale.h>
 #include <time.h>
 #include <errno.h>
+#include <raylib.h>
 
 #include "linkedlst.h"
 #include "structs.h"
 #include "util.h"
 #include "world.h"
 #include "agent.h"
-#include "sensor.h"
 
 //#pragma message __FILE__
 #endif // INCLUDE_MAIN_H

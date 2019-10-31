@@ -4,7 +4,6 @@
 int **alocArray(int n, int m);
 void iniGraph(int **array);
 void setVgrau(int **array, Room *room);
-int randonum(int low, int high);
 
 void freeArray(int n, int **ptr);
 

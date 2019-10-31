@@ -11,6 +11,16 @@ List *iniLst(void) {
 	return list;
 }
 
+int lstidx(List *list, int index) {
+	if (index >= 0 && index < list->size) {
+		Node *node = list->head;
+		for (int i=0; i<index; i++)
+			node = node->next;
+		return node->key;
+	}
+	return -1;
+}
+
 void pshLst(List *list, int key) {
 	Node *node = malloc(sizeof(Node));
 	if (node == NULL) {

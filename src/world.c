@@ -54,7 +54,7 @@ void genWorld(int **world, Room *wroom) {
 
 	qty = 0;
 	while (qty != 1) {
-		wumpus = randonum(0,ROOM-1);
+		wumpus = GetRandomValue(0,ROOM-1);
 		if (!excluded(exclude,wumpus)) {
 			wroom[wumpus].wumpus = true;
 			for (int i=0; i < ROOM; i++)
@@ -66,7 +66,7 @@ void genWorld(int **world, Room *wroom) {
 
 	qty = 0;
 	while (qty != 3) {
-		whell = randonum(0,ROOM-1);
+		whell = GetRandomValue(0,ROOM-1);
 		if (!excluded(exclude,whell)) {
 			wroom[whell].whell = true;
 			for (int i=0; i < ROOM; i++)
@@ -79,7 +79,7 @@ void genWorld(int **world, Room *wroom) {
 
 	qty = 0;
 	while (qty != 1) {
-		gold = randonum(0,ROOM-1);
+		gold = GetRandomValue(0,ROOM-1);
 		if (!excluded(exclude,gold)) {
 			wroom[gold].gold = true;
 			qty++;
