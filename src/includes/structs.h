@@ -19,6 +19,17 @@ typedef struct room_t {
 	bool limit;
 } Room;
 
+typedef struct bknow_t {
+	int id;
+	int grau;
+	bool wumpus;
+	bool fedor;
+	bool whell;
+	bool brisa;
+	bool gold;
+	bool limit;
+} Bknow;
+
 typedef struct sensor_t {
 	bool fedor;
 	bool brisa;

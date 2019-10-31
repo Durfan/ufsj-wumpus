@@ -45,6 +45,7 @@ int main(void) {
 	setVgrau(world,wroom);
 
 	Agent *agent = iniAgent();
+	Sensor sensor;
 
 	#ifdef DEBUG
 	prtGraph(world);
@@ -79,8 +80,10 @@ int main(void) {
 			if (IsKeyPressed(KEY_R))
 				rstWorld(world,wroom);
 
-			if (IsKeyPressed(KEY_SPACE))
-				rstWorld(world,wroom);
+			if (IsKeyPressed(KEY_SPACE)) {
+				sensor = scanRoom(agent,wroom);
+				prtSensor(sensor);
+			}
 
 			for (int i = 0; i < ROOM; i++) {
 				DrawTexture(tex_floor, arooms[i].x, arooms[i].y, WHITE);
