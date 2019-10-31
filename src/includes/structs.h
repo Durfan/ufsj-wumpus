@@ -2,6 +2,7 @@
 #define INCLUDE_STRUCTS_H
 
 typedef struct agent_t {
+	int score;
 	bool arrow;
 	bool grito;
 	bool coord;

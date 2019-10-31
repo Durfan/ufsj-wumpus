@@ -7,6 +7,7 @@ Agent *iniAgent(void) {
 		exit(EXIT_FAILURE);
 	}
 
+	agent->score = 0;
 	agent->arrow = 1;
 	agent->coord = 0;
 	agent->grito = false;

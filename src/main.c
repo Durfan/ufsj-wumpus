@@ -66,7 +66,6 @@ int main(void) {
 		}
 
 		// Draw
-
 		BeginDrawing();
 
 			ClearBackground(RAYWHITE);
