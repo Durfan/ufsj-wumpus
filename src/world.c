@@ -30,7 +30,19 @@ int excluded(List *list, int key) {
 	return 0;
 }
 
-void genWorld(int **world,Room *wroom) {
+void rstWorld(int **world, Room *room) {
+	for (int i=0; i < ROOM; i++) {
+		room[i].wumpus = false;
+		room[i].fedor  = false;
+		room[i].whell  = false;
+		room[i].brisa  = false;
+		room[i].gold   = false;
+		room[i].limit  = false;
+	}
+	genWorld(world,room);
+}
+
+void genWorld(int **world, Room *wroom) {
 	int qty,whell,gold,wumpus;
 	List *exclude = iniLst();
 	pshLst(exclude,0);

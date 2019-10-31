@@ -2,6 +2,8 @@
 	"files.associations": {
 		"main.h": "c",
 		"array": "c",
-		"linkedlst.h": "c"
+		"linkedlst.h": "c",
+		"raylib.h": "c",
+		"raygui.h": "c"
 	}
 }

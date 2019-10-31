@@ -3,6 +3,7 @@
 
 Room *initRoom(void);
 int excluded(List *list, int key);
+void rstWorld(int **world, Room *room);
 void genWorld(int **world, Room *wroom);
 void prtwchar(bool cond, char *str);
 void prtWorld(Room *room);
