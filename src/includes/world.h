@@ -2,6 +2,7 @@
 #define INCLUDE_WORLD_H
 
 Room *initRoom(void);
+Bknow *iniBknow(void);
 int excluded(List *list, int key);
 void rstWorld(int **world, Room *room);
 void genWorld(int **world, Room *wroom);

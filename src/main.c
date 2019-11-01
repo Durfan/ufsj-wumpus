@@ -1,5 +1,7 @@
 #include "includes/main.h"
 
+void manual(Agent *agent);
+
 int main(void) {
 
 	setlocale(LC_ALL,"");
@@ -14,6 +16,7 @@ int main(void) {
 	Texture2D tex_agent  = LoadTexture("resources/agent.png");
 	Texture2D tex_floor  = LoadTexture("resources/floor.png");
 	Texture2D tex_trap   = LoadTexture("resources/trap.png");
+	Texture2D tex_dtrap  = LoadTexture("resources/dtrap.png");
 	Texture2D tex_strap  = LoadTexture("resources/strap.png");
 	Texture2D tex_wumpus = LoadTexture("resources/wumpus.png");
 	Texture2D tex_chest  = LoadTexture("resources/chest.png");
@@ -46,7 +49,7 @@ int main(void) {
 	setVgrau(world,wroom);
 
 	Agent *agent = iniAgent();
-	Room *aroom = initRoom();
+	Bknow *aroom = iniBknow();
 	int **bknow = alocArray(ROOM,ROOM);
 	agent->coord = 0;
 	Sensor sensor;
@@ -79,6 +82,7 @@ int main(void) {
 
 		sensor = scanQuad(agent,wroom);
 		scanPath(agent,world,bknow);
+		ifengine(agent,sensor,aroom,bknow);
 
 		// Draw
 		BeginDrawing();
@@ -96,15 +100,20 @@ int main(void) {
 			if (IsKeyPressed(KEY_R))
 				rstWorld(world,wroom);
 
-			if (IsKeyPressed(KEY_SPACE)) {
+			if (IsKeyPressed(KEY_SPACE))
 				leapofaith(agent,world);
-			}
+
+			manual(agent);
 
 			for (int i = 0; i < ROOM; i++) {
 				DrawTexture(tex_floor, arooms[i].x, arooms[i].y, WHITE);
 				position.x = arooms[posagent].x;
 				position.y = arooms[posagent].y;
 				DrawTextureRec(tex_agent,frmRecS,position,WHITE);
+				if (aroom[i].traps == -1)
+					DrawTexture(tex_dtrap, arooms[i].x, arooms[i].y, WHITE);
+				if (aroom[i].traps == 1)
+					DrawTexture(tex_trap, arooms[i].x, arooms[i].y, WHITE);
 			}
 
 			for (int i = 0; i < ROOM; i++) {
@@ -118,13 +127,13 @@ int main(void) {
 					DrawTextureRec(tex_gold,frmRecO,position,WHITE);
 					//DrawTexture(tex_chest, wrooms[i].x, wrooms[i].y, WHITE);
 				}
-				if (wroom[i].whell) {
+				if (wroom[i].traps) {
 					position.x = wrooms[i].x;
 					position.y = wrooms[i].y;
 					DrawTextureRec(tex_strap,frmRecO,position,WHITE);
 					//DrawTexture(tex_trap, wrooms[i].x, wrooms[i].y, WHITE);
 				}
-				if (wroom[i].wumpus) {
+				if (wroom[i].ghost) {
 					position.x = wrooms[i].x;
 					position.y = wrooms[i].y;
 					DrawTextureRec(tex_wumpus,frmRecS,position,WHITE);
@@ -148,6 +157,7 @@ int main(void) {
 	UnloadTexture(tex_chest);
 	UnloadTexture(tex_wumpus);
 	UnloadTexture(tex_trap);
+	UnloadTexture(tex_dtrap);
 	UnloadTexture(tex_strap);
 	UnloadTexture(tex_floor);
 	UnloadTexture(tex_agent);
@@ -158,4 +168,30 @@ int main(void) {
 	CloseWindow();
 
 	return EXIT_SUCCESS;
+}
+
+void manual(Agent *agent) {
+
+	if (IsKeyPressed(KEY_DOWN)) {
+		if (agent->coord < (ROOM-WROW)) {
+			agent->coord += WROW;
+			agent->score -= 1;
+		}
+	} else if (IsKeyPressed(KEY_UP)) {
+		if (agent->coord > 0) {
+			agent->coord -= WROW;
+			agent->score -= 1;
+		}
+	} else if (IsKeyPressed(KEY_RIGHT)) {
+		if (agent->coord < ROOM) {
+			agent->coord += 1;
+			agent->score -= 1;
+		}
+	} else if (IsKeyPressed(KEY_LEFT)) {
+		if (agent->coord > 0) {
+			agent->coord -= 1;
+			agent->score -= 1;
+		}
+	}
+
 }

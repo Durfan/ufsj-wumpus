@@ -12,30 +12,31 @@ typedef struct agent_t {
 typedef struct room_t {
 	int id;
 	int grau;
-	bool wumpus;
-	bool fedor;
-	bool whell;
-	bool brisa;
+	bool ghost;
+	bool smell;
+	bool traps;
+	bool wind;
 	bool gold;
-	bool limit;
+	bool lmit;
 } Room;
 
 typedef struct bknow_t {
 	int id;
 	int grau;
-	bool wumpus;
-	bool fedor;
-	bool whell;
-	bool brisa;
+	int ghost;
+	int traps;
+	bool visited;
+	bool smell;
+	bool wind;
 	bool gold;
-	bool limit;
+	bool lmit;
 } Bknow;
 
 typedef struct sensor_t {
-	bool fedor;
-	bool brisa;
+	bool smell;
+	bool wind;
 	bool gold;
-	bool limit;
+	bool lmit;
 } Sensor;
 
 //#pragma message __FILE__

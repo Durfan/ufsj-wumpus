@@ -10,12 +10,34 @@ Room *initRoom(void) {
 	for (int i=0; i < ROOM; i++) {
 		room[i].id = i;
 		room[i].grau = 0;
-		room[i].wumpus = false;
-		room[i].fedor  = false;
-		room[i].whell  = false;
-		room[i].brisa  = false;
-		room[i].gold   = false;
-		room[i].limit  = false;
+		room[i].ghost = false;
+		room[i].smell = false;
+		room[i].traps = false;
+		room[i].wind  = false;
+		room[i].gold  = false;
+		room[i].lmit  = false;
+	}
+
+	return room;
+}
+
+Bknow *iniBknow(void) {
+	Bknow *room = malloc(ROOM * sizeof(Bknow));
+	if (room == NULL) {
+		perror(PROGRAM);
+		exit(EXIT_FAILURE);
+	}
+
+	for (int i=0; i < ROOM; i++) {
+		room[i].id = i;
+		room[i].grau = 0;
+		room[i].visited = false;
+		room[i].ghost = 0;
+		room[i].traps = 0;
+		room[i].smell = false;
+		room[i].wind  = false;
+		room[i].gold  = false;
+		room[i].lmit  = false;
 	}
 
 	return room;
@@ -34,12 +56,12 @@ int excluded(List *list, int key) {
 
 void rstWorld(int **world, Room *room) {
 	for (int i=0; i < ROOM; i++) {
-		room[i].wumpus = false;
-		room[i].fedor  = false;
-		room[i].whell  = false;
-		room[i].brisa  = false;
-		room[i].gold   = false;
-		room[i].limit  = false;
+		room[i].ghost = false;
+		room[i].smell = false;
+		room[i].traps = false;
+		room[i].wind  = false;
+		room[i].gold  = false;
+		room[i].lmit  = false;
 	}
 	genWorld(world,room);
 }
@@ -56,10 +78,10 @@ void genWorld(int **world, Room *wroom) {
 	while (qty != 1) {
 		wumpus = GetRandomValue(0,ROOM-1);
 		if (!excluded(exclude,wumpus)) {
-			wroom[wumpus].wumpus = true;
+			wroom[wumpus].ghost = true;
 			for (int i=0; i < ROOM; i++)
 				if (world[wumpus][i])
-					wroom[i].fedor = true;
+					wroom[i].smell = true;
 			qty++;
 		}
 	}
@@ -68,10 +90,10 @@ void genWorld(int **world, Room *wroom) {
 	while (qty != 3) {
 		whell = GetRandomValue(0,ROOM-1);
 		if (!excluded(exclude,whell)) {
-			wroom[whell].whell = true;
+			wroom[whell].traps = true;
 			for (int i=0; i < ROOM; i++)
 				if (world[whell][i])
-					wroom[i].brisa = true;
+					wroom[i].wind = true;
 			pshLst(exclude,whell);
 			qty++;
 		}
@@ -110,10 +132,10 @@ void prtwchar(bool cond, char *str) {
 void prtWorld(Room *room) {
 	int barran = 0;
 	for (int i=0; i < ROOM; i++) {
-		prtwchar(room[i].wumpus,CRED"W"CRSET);
-		prtwchar(room[i].fedor, CRED"F"CRSET);
-		prtwchar(room[i].whell,CBLUE"P"CRSET);
-		prtwchar(room[i].brisa,CBLUE"B"CRSET);
+		prtwchar(room[i].ghost,CRED"W"CRSET);
+		prtwchar(room[i].smell,CRED"F"CRSET);
+		prtwchar(room[i].traps,CBLUE"P"CRSET);
+		prtwchar(room[i].wind, CBLUE"B"CRSET);
 		prtwchar(room[i].gold, CYELL"G"CRSET);
 		printf(":%d ", room[i].grau);
 
