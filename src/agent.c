@@ -9,6 +9,7 @@ Agent *iniAgent(void) {
 
 	agent->coord = START;
 	agent->score = 0;
+	agent->ghost = -1;
 	agent->arrow = 1;
 	agent->grito = false;
 	agent->limit = false;
@@ -19,7 +20,9 @@ Agent *iniAgent(void) {
 void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 	int coord = agent->coord;
 	aquad[coord].visit = true;
-
+	bool visited;
+	TriBol setinf;
+	
 	if (sensor.smell) {
 		aquad[coord].smell = true;
 		for (int i=0; i < QUAD; i++)
@@ -29,14 +32,20 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 
 	if (sensor.wind) {
 		aquad[coord].wind = true;
-		for (int i=0; i < QUAD; i++)
-			if (know[coord][i] && !aquad[i].visit)
-				aquad[i].traps = -1;
+		for (int i=0; i < QUAD; i++) {
+			setinf  = aquad[i].traps;
+			visited = aquad[i].visit;
+			if (know[coord][i] && (setinf == noinf) && !visited)
+				aquad[i].traps = talvez;
+		}
 	}
 	else {
-		for (int i=0; i < QUAD; i++)
-			if (know[coord][i] && (aquad[i].traps == -1))
-				aquad[i].traps = 0;	
+		aquad[coord].wind = false;
+		for (int i=0; i < QUAD; i++) {
+			setinf = aquad[i].traps;
+			if (know[coord][i])
+				aquad[i].traps = nope;
+		}
 	}
 
 }

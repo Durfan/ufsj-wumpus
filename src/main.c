@@ -95,8 +95,10 @@ int main(void) {
 
 			showInfos(sensor);
 
-			if (IsKeyPressed(KEY_R))
+			if (IsKeyPressed(KEY_R)) {
 				rstWorld(world,know,agent,wquad,aquad);
+				PlayMusicStream(music);
+			}
 
 			if (IsKeyPressed(KEY_SPACE))
 				leapofaith(agent,world);
@@ -108,6 +110,11 @@ int main(void) {
 				position.x = aquads[posagent].x;
 				position.y = aquads[posagent].y;
 				DrawTextureRec(tex_agent,frmRecS,position,WHITE);
+				if (aquad[i].visit) {
+					position.x = aquads[i].x + 16;
+					position.y = aquads[i].y + 16;
+					DrawCircleV(position,3,DARKGRAY);
+				}
 				if (aquad[i].traps == -1)
 					DrawTexture(tex_dtrap, aquads[i].x, aquads[i].y, WHITE);
 				if (aquad[i].traps == 1)

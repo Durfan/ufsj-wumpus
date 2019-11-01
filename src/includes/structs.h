@@ -1,11 +1,12 @@
 #ifndef INCLUDE_STRUCTS_H
 #define INCLUDE_STRUCTS_H
 
-typedef enum { talvez=-1, nope, certeza } TriBol;
+typedef enum { talvez=-1, nope, certeza, noinf } TriBol;
 
 typedef struct agent_t {
 	int coord;
 	int score;
+	int ghost;
 	bool arrow;
 	bool grito;
 	bool limit;
