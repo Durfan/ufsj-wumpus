@@ -3,7 +3,6 @@
 
 int **alocArray(int n, int m);
 void iniGraph(int **array);
-int getVgrau(int **array, int v);
 
 void freeArray(int n, int **ptr);
 

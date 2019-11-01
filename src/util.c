@@ -29,14 +29,6 @@ void iniGraph(int **array) {
 	}
 }
 
-int getVgrau(int **array, int v) {
-	int grau = 0;
-	for (int i=0; i < QUAD; i++)
-		if (array[v][i])
-			grau++;
-	return grau;
-}
-
 void freeArray(int n, int **ptr) {
 	for (int i=0 ; i<n ; i++)
 		free(ptr[i]);

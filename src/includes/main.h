@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <string.h>
 #include <locale.h>
 #include <time.h>
 #include <errno.h>
@@ -22,6 +21,7 @@
 
 #include "linkedlst.h"
 #include "structs.h"
+#include "sensor.h"
 #include "util.h"
 #include "world.h"
 #include "agent.h"
