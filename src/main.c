@@ -9,18 +9,18 @@ int main(void) {
 	InitWindow(320,240,"World of Wumpus Reloaded");
 	InitAudioDevice();
 
-	Music music = LoadMusicStream("resources/metalgear.ogg");
+	Music music = LoadMusicStream("resources/snd_mgear.ogg");
+	Sound dead  = LoadSound("resources/snd_scream.ogg");
 	PlayMusicStream(music);
 
 	Vector2 position;
-	Texture2D tex_agent  = LoadTexture("resources/agent.png");
-	Texture2D tex_floor  = LoadTexture("resources/floor.png");
-	Texture2D tex_trap   = LoadTexture("resources/trap.png");
-	Texture2D tex_dtrap  = LoadTexture("resources/dtrap.png");
-	Texture2D tex_strap  = LoadTexture("resources/strap.png");
-	Texture2D tex_wumpus = LoadTexture("resources/wumpus.png");
-	Texture2D tex_chest  = LoadTexture("resources/chest.png");
-	Texture2D tex_gold   = LoadTexture("resources/gold.png");
+	Texture2D tex_gold  = LoadTexture("resources/gold.png");
+	Texture2D tex_agent = LoadTexture("resources/agent.png");
+	Texture2D tex_ghost = LoadTexture("resources/ghost.png");
+	Texture2D tex_traps = LoadTexture("resources/traps.png");
+	Texture2D tex_trapf = LoadTexture("resources/trapf.png");
+	Texture2D tex_trapd = LoadTexture("resources/trapd.png");
+	Texture2D tex_floor = LoadTexture("resources/floor.png");
 
 	Rectangle frmRecS = {   0, 0, 32, 32 };
 	Rectangle frmRecO = {   0, 0, 32, 32 };
@@ -49,8 +49,9 @@ int main(void) {
 
 	Agent *agent = iniAgent();
 	Know *aquad = iniKnow();
-	int **know = alocArray(QUAD,QUAD);
 	Sensor sensor;
+	bool lives = true;
+	int **know = alocArray(QUAD,QUAD);
 	int posagent;
 
 	#ifdef DEBUG
@@ -61,6 +62,8 @@ int main(void) {
 	// Main game loop
 	while (!WindowShouldClose()) {
 		// Update variables
+		UpdateMusicStream(music);
+
 		framesCounter++;
 
 		if (framesCounter >= (60/framesSpeed)) {
@@ -73,37 +76,42 @@ int main(void) {
 		}
 
 		posagent = getpos(agent);
+
 		if (wasted(agent,wquad)) {
 			StopMusicStream(music);
 			DrawText("WASTED", 210, 20, 20, RED);
+			framesCounter = 0;
+			if (lives) {
+				PlaySound(dead);
+				lives = false;
+			}
 		}
 
 		sensor = scanQuad(agent,wquad);
 		scanPath(agent,world,know);
 		ifengine(agent,sensor,aquad,know);
 
+		if (IsKeyPressed(KEY_R)) {
+			rstWorld(world,know,agent,wquad,aquad);
+			PlayMusicStream(music);
+			lives = true;
+		}
+
+		if (IsKeyPressed(KEY_SPACE))
+			leapofaith(agent,world);
+
+		manual(agent);
+
 		// Draw
 		BeginDrawing();
 
 			ClearBackground(RAYWHITE);
-
-			UpdateMusicStream(music);
 
 			DrawText(FormatText("Score %05d", agent->score), 20, 20, 20, DARKGRAY);
 			DrawText("Aperte r para resetar", 20, 205, 10, DARKGRAY);
 			DrawText("Aperte [spacebar] para avançar", 20, 215, 10, DARKGRAY);
 
 			showInfos(sensor);
-
-			if (IsKeyPressed(KEY_R)) {
-				rstWorld(world,know,agent,wquad,aquad);
-				PlayMusicStream(music);
-			}
-
-			if (IsKeyPressed(KEY_SPACE))
-				leapofaith(agent,world);
-
-			manual(agent);
 
 			for (int i = 0; i < QUAD; i++) {
 				DrawTexture(tex_floor, aquads[i].x, aquads[i].y, WHITE);
@@ -116,9 +124,9 @@ int main(void) {
 					DrawCircleV(position,3,DARKGRAY);
 				}
 				if (aquad[i].traps == -1)
-					DrawTexture(tex_dtrap, aquads[i].x, aquads[i].y, WHITE);
+					DrawTexture(tex_trapd, aquads[i].x, aquads[i].y, WHITE);
 				if (aquad[i].traps == 1)
-					DrawTexture(tex_trap, aquads[i].x, aquads[i].y, WHITE);
+					DrawTexture(tex_trapf, aquads[i].x, aquads[i].y, WHITE);
 			}
 
 			for (int i = 0; i < QUAD; i++) {
@@ -126,23 +134,14 @@ int main(void) {
 				position.x = wquads[posagent].x;
 				position.y = wquads[posagent].y;
 				DrawTextureRec(tex_agent,frmRecS,position,WHITE);
-				if (wquad[i].gold) {
-					position.x = wquads[i].x;
-					position.y = wquads[i].y;
+				position.x = wquads[i].x;
+				position.y = wquads[i].y;
+				if (wquad[i].gold)
 					DrawTextureRec(tex_gold,frmRecO,position,WHITE);
-					//DrawTexture(tex_chest, wquads[i].x, wquads[i].y, WHITE);
-				}
-				if (wquad[i].traps) {
-					position.x = wquads[i].x;
-					position.y = wquads[i].y;
-					DrawTextureRec(tex_strap,frmRecO,position,WHITE);
-					//DrawTexture(tex_trap, wquads[i].x, wquads[i].y, WHITE);
-				}
-				if (wquad[i].ghost) {
-					position.x = wquads[i].x;
-					position.y = wquads[i].y;
-					DrawTextureRec(tex_wumpus,frmRecS,position,WHITE);
-				}
+				if (wquad[i].traps)
+					DrawTextureRec(tex_traps,frmRecO,position,WHITE);
+				if (wquad[i].ghost)
+					DrawTextureRec(tex_ghost,frmRecS,position,WHITE);
 			}
 
 			DrawRectangleLinesEx(wborder, 2, DARKGRAY);
@@ -159,15 +158,14 @@ int main(void) {
 	free(agent);
 
 	UnloadTexture(tex_gold);
-	UnloadTexture(tex_chest);
-	UnloadTexture(tex_wumpus);
-	UnloadTexture(tex_trap);
-	UnloadTexture(tex_dtrap);
-	UnloadTexture(tex_strap);
-	UnloadTexture(tex_floor);
 	UnloadTexture(tex_agent);
-
+	UnloadTexture(tex_ghost);
+	UnloadTexture(tex_traps);
+	UnloadTexture(tex_trapf);
+	UnloadTexture(tex_trapd);
+	UnloadTexture(tex_floor);
 	UnloadMusicStream(music);
+	UnloadSound(dead);
 
 	CloseAudioDevice();
 	CloseWindow();
