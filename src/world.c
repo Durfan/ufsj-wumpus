@@ -130,6 +130,7 @@ void prtWorld(Quad *quad) {
 
 void prtGraph(int **array) {
 	for (int i=0; i < QUAD; i++) {
+		printf(" %d:", i+1);
 		for (int j=0; j < QUAD; j++)
 			printf(" %d", array[i][j]);
 		printf(" : grau %d", getVgrau(array,i));

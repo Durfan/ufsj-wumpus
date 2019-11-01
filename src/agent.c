@@ -9,7 +9,6 @@ Agent *iniAgent(void) {
 
 	agent->coord = START;
 	agent->score = 0;
-	agent->ghost = -1;
 	agent->arrow = 1;
 	agent->grito = false;
 	agent->limit = false;
@@ -22,12 +21,26 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 	aquad[coord].visit = true;
 	bool visited;
 	TriBol setinf;
+
+	if (sensor.gold)
+		aquad[coord].gold = true;
 	
 	if (sensor.smell) {
 		aquad[coord].smell = true;
-		for (int i=0; i < QUAD; i++)
-			if (know[coord][i] && !aquad[i].visit)
-				aquad[i].ghost = 1;
+		for (int i=0; i < QUAD; i++) {
+			setinf  = aquad[i].ghost;
+			visited = aquad[i].visit;
+			if (know[coord][i] && (setinf == noinf) && !visited)
+				aquad[i].ghost = talvez;
+		}
+	}
+	else {
+		aquad[coord].smell = false;
+		for (int i=0; i < QUAD; i++) {
+			setinf = aquad[i].ghost;
+			if (know[coord][i])
+				aquad[i].ghost = nope;
+		}
 	}
 
 	if (sensor.wind) {
@@ -50,6 +63,23 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 
 }
 
+void confirm(int maybe, Know *aquad, int **know, int type) {
+	bool check;
+	for (int i=0; i < QUAD; i++) {
+		switch (type) {
+		case 0:
+			check = aquad[i].wind;
+			break;
+		case 1:
+			check = aquad[i].smell;
+			break;
+		}
+		if (know[i][maybe] && check) {
+			aquad[maybe].traps = certeza;
+		}
+	}
+}
+
 void leapofaith(Agent *agent, int **world) {
 	List *paths = iniLst();
 	for (int i=0; i < QUAD; i++) {
@@ -67,10 +97,6 @@ void leapofaith(Agent *agent, int **world) {
 
 void move(Agent *agent, int quad) {
 	agent->coord = quad;
-}
-
-int getpos(Agent *agent) {
-	return agent->coord;
 }
 
 int wasted(Agent *agent, Quad *wquad) {

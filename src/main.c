@@ -14,13 +14,18 @@ int main(void) {
 	PlayMusicStream(music);
 
 	Vector2 position;
-	Texture2D tex_gold  = LoadTexture("resources/gold.png");
-	Texture2D tex_agent = LoadTexture("resources/agent.png");
-	Texture2D tex_ghost = LoadTexture("resources/ghost.png");
-	Texture2D tex_traps = LoadTexture("resources/traps.png");
-	Texture2D tex_trapf = LoadTexture("resources/trapf.png");
-	Texture2D tex_trapd = LoadTexture("resources/trapd.png");
-	Texture2D tex_floor = LoadTexture("resources/floor.png");
+	Texture2D texgold  = LoadTexture("resources/gold.png");
+	Texture2D texagent = LoadTexture("resources/agent.png");
+	Texture2D texghost = LoadTexture("resources/ghost.png");
+	Texture2D texghosd = LoadTexture("resources/ghosd.png");
+	Texture2D textraps = LoadTexture("resources/traps.png");
+	Texture2D textrapf = LoadTexture("resources/trapf.png");
+	Texture2D textrapd = LoadTexture("resources/trapd.png");
+	Texture2D texewind = LoadTexture("resources/ewind.png");
+	Texture2D texesmel = LoadTexture("resources/esmel.png");
+	Texture2D texfloor = LoadTexture("resources/floor.png");
+	Texture2D texhwter = LoadTexture("resources/hwter.png");
+	Texture2D texlvbar = LoadTexture("resources/lvbar.png");
 
 	Rectangle frmRecS = {   0, 0, 32, 32 };
 	Rectangle frmRecO = {   0, 0, 32, 32 };
@@ -75,13 +80,14 @@ int main(void) {
 			frmRecO.x = (currentFrame/2) * 32;
 		}
 
-		posagent = getpos(agent);
+		posagent = scanCord(agent);
 
-		if (wasted(agent,wquad)) {
+		if (wasted(agent,wquad) == 1) {
 			StopMusicStream(music);
-			DrawText("WASTED", 210, 20, 20, RED);
+			DrawText("WASTED!",190,35,10,RED);
 			framesCounter = 0;
 			if (lives) {
+				agent->score -= 1000;
 				PlaySound(dead);
 				lives = false;
 			}
@@ -89,6 +95,7 @@ int main(void) {
 
 		sensor = scanQuad(agent,wquad);
 		scanPath(agent,world,know);
+		scanLimt(agent,know);
 		ifengine(agent,sensor,aquad,know);
 
 		if (IsKeyPressed(KEY_R)) {
@@ -107,45 +114,66 @@ int main(void) {
 
 			ClearBackground(RAYWHITE);
 
-			DrawText(FormatText("Score %05d", agent->score), 20, 20, 20, DARKGRAY);
-			DrawText("Aperte r para resetar", 20, 205, 10, DARKGRAY);
-			DrawText("Aperte [spacebar] para avançar", 20, 215, 10, DARKGRAY);
+			DrawText(FormatText("%05d", agent->score),20,35,20,DARKGRAY);
+			DrawTexture(texlvbar,20,15,WHITE);
+			DrawTexture(texhwter,75,15,WHITE);
+			DrawText(FormatText("x %d", agent->arrow),92,20,10,DARKGRAY);
+			DrawText("Aperte r para resetar",20,205,10,DARKGRAY);
+			DrawText("Aperte [spacebar] para avançar",20,215,10,DARKGRAY);
+
+			DrawText(FormatText("Q%02d L%02d A%02d G%02d",
+				agent->coord, agent->limit, agent->arrow, agent->grito),
+				190,15,10,DARKGRAY);
+
+			DrawText(FormatText("W%02d S%02d G%02d",
+				sensor.wind, sensor.smell, sensor.gold),
+				190,25,10,DARKGRAY);
 
 			showInfos(sensor);
 
 			for (int i = 0; i < QUAD; i++) {
-				DrawTexture(tex_floor, aquads[i].x, aquads[i].y, WHITE);
+				DrawTexture(texfloor,aquads[i].x,aquads[i].y,WHITE);
 				position.x = aquads[posagent].x;
 				position.y = aquads[posagent].y;
-				DrawTextureRec(tex_agent,frmRecS,position,WHITE);
+				DrawTextureRec(texagent,frmRecS,position,WHITE);
 				if (aquad[i].visit) {
 					position.x = aquads[i].x + 16;
 					position.y = aquads[i].y + 16;
 					DrawCircleV(position,3,DARKGRAY);
 				}
+				position.x = aquads[i].x;
+				position.y = aquads[i].y;
+				if (aquad[i].gold)
+					DrawTextureRec(texgold,frmRecO,position,WHITE);
+				if (aquad[i].wind)
+					DrawTextureRec(texewind,frmRecO,position,WHITE);
+				if (aquad[i].smell)
+					DrawTextureRec(texesmel,frmRecO,position,WHITE);
+				if (aquad[i].ghost == -1)
+					DrawTexture(texghosd,aquads[i].x,aquads[i].y,WHITE);
 				if (aquad[i].traps == -1)
-					DrawTexture(tex_trapd, aquads[i].x, aquads[i].y, WHITE);
+					DrawTexture(textrapd,aquads[i].x,aquads[i].y,WHITE);
 				if (aquad[i].traps == 1)
-					DrawTexture(tex_trapf, aquads[i].x, aquads[i].y, WHITE);
+					DrawTexture(textrapf,aquads[i].x,aquads[i].y,WHITE);
 			}
 
 			for (int i = 0; i < QUAD; i++) {
-				DrawTexture(tex_floor, wquads[i].x, wquads[i].y, WHITE);
+				DrawTexture(texfloor,wquads[i].x,wquads[i].y,WHITE);
 				position.x = wquads[posagent].x;
 				position.y = wquads[posagent].y;
-				DrawTextureRec(tex_agent,frmRecS,position,WHITE);
+				DrawTextureRec(texagent,frmRecS,position,WHITE);
 				position.x = wquads[i].x;
 				position.y = wquads[i].y;
 				if (wquad[i].gold)
-					DrawTextureRec(tex_gold,frmRecO,position,WHITE);
+					DrawTextureRec(texgold,frmRecO,position,WHITE);
 				if (wquad[i].traps)
-					DrawTextureRec(tex_traps,frmRecO,position,WHITE);
+					DrawTextureRec(textraps,frmRecO,position,WHITE);
 				if (wquad[i].ghost)
-					DrawTextureRec(tex_ghost,frmRecS,position,WHITE);
+					DrawTextureRec(texghost,frmRecS,position,WHITE);
 			}
 
-			DrawRectangleLinesEx(wborder, 2, DARKGRAY);
-			DrawRectangleLinesEx(aborder, 2, DARKGRAY);
+			DrawRectangleLinesEx(wborder,2,DARKGRAY);
+			DrawRectangleLinesEx(aborder,2,DARKGRAY);
 
 		EndDrawing();
 	}
@@ -157,13 +185,18 @@ int main(void) {
 	free(aquad);
 	free(agent);
 
-	UnloadTexture(tex_gold);
-	UnloadTexture(tex_agent);
-	UnloadTexture(tex_ghost);
-	UnloadTexture(tex_traps);
-	UnloadTexture(tex_trapf);
-	UnloadTexture(tex_trapd);
-	UnloadTexture(tex_floor);
+	UnloadTexture(texgold);
+	UnloadTexture(texagent);
+	UnloadTexture(texghost);
+	UnloadTexture(texghosd);
+	UnloadTexture(textraps);
+	UnloadTexture(textrapf);
+	UnloadTexture(textrapd);
+	UnloadTexture(texfloor);
+	UnloadTexture(texewind);
+	UnloadTexture(texesmel);
+	UnloadTexture(texhwter);
+	UnloadTexture(texlvbar);
 	UnloadMusicStream(music);
 	UnloadSound(dead);
 

@@ -10,6 +10,10 @@ Sensor scanQuad(Agent *agent, Quad *wquad) {
 	return sensor;
 }
 
+int scanCord(Agent *agent) {
+	return agent->coord;
+}
+
 void scanPath(Agent *agent, int **world, int **know) {
 	int coord = agent->coord;
 	for (int i=0; i < QUAD; i++)
@@ -17,9 +21,12 @@ void scanPath(Agent *agent, int **world, int **know) {
 			know[coord][i] = know[i][coord] = 1;
 }
 
-int scanLimit(Agent *agent, int** know) {
-	if (getVgrau(know,agent->coord) == 4)
+int scanLimt(Agent *agent, int **know) {
+	if (getVgrau(know,agent->coord) == 4) {
+		agent->limit = false;
 		return 0;
+	}
+	agent->limit = true;
 	return 1;
 }
 
@@ -33,11 +40,11 @@ int getVgrau(int **array, int v) {
 
 void showInfos(Sensor sensor) {
 	if (sensor.smell)
-		DrawText("PERIGO!", 20, 40, 10, RED);
+		DrawText("PERIGO!", 100, 40, 10, RED);
 	else if (sensor.wind)
-		DrawText("PERIGO!", 20, 40, 10, RED);
+		DrawText("PERIGO!", 100, 40, 10, RED);
 	else if (sensor.gold)
-		DrawText("OURO!!!", 20, 40, 10, ORANGE);
+		DrawText("OURO!!!", 100, 40, 10, ORANGE);
 }
 
 void prtSensor(Sensor sensor) {
