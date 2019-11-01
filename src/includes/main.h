@@ -6,20 +6,15 @@
 #define MAJORV 0
 #define MINORV 1
 
-#define CRED  "\x1b[31m"
-#define CGREN "\x1b[32m"
-#define CYELL "\x1b[33m"
-#define CBLUE "\x1b[36m"
-#define CRSET "\x1b[0m"
-
-#define ROOM 16 // World Size
+#define QUAD 16 // World Size
 #define WROW 4
 #define WCOL 4
+#define START 0
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
+#include <string.h>
 #include <locale.h>
 #include <time.h>
 #include <errno.h>

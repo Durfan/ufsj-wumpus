@@ -1,46 +1,40 @@
 #include "includes/main.h"
 
-Room *initRoom(void) {
-	Room *room = malloc(ROOM * sizeof(Room));
-	if (room == NULL) {
+Quad *iniQuad(void) {
+	Quad *quad = malloc(QUAD * sizeof(Quad));
+	if (quad == NULL) {
 		perror(PROGRAM);
 		exit(EXIT_FAILURE);
 	}
 
-	for (int i=0; i < ROOM; i++) {
-		room[i].id = i;
-		room[i].grau = 0;
-		room[i].ghost = false;
-		room[i].smell = false;
-		room[i].traps = false;
-		room[i].wind  = false;
-		room[i].gold  = false;
-		room[i].lmit  = false;
+	for (int i=0; i < QUAD; i++) {
+		quad[i].ghost = false;
+		quad[i].smell = false;
+		quad[i].traps = false;
+		quad[i].wind  = false;
+		quad[i].gold  = false;
 	}
 
-	return room;
+	return quad;
 }
 
-Bknow *iniBknow(void) {
-	Bknow *room = malloc(ROOM * sizeof(Bknow));
-	if (room == NULL) {
+Know *iniKnow(void) {
+	Know *quad = malloc(QUAD * sizeof(Know));
+	if (quad == NULL) {
 		perror(PROGRAM);
 		exit(EXIT_FAILURE);
 	}
 
-	for (int i=0; i < ROOM; i++) {
-		room[i].id = i;
-		room[i].grau = 0;
-		room[i].visited = false;
-		room[i].ghost = 0;
-		room[i].traps = 0;
-		room[i].smell = false;
-		room[i].wind  = false;
-		room[i].gold  = false;
-		room[i].lmit  = false;
+	for (int i=0; i < QUAD; i++) {
+		quad[i].visit = false;
+		quad[i].ghost = nope;
+		quad[i].smell = false;
+		quad[i].traps = nope;
+		quad[i].wind  = false;
+		quad[i].gold  = false;
 	}
 
-	return room;
+	return quad;
 }
 
 int excluded(List *list, int key) {
@@ -54,20 +48,8 @@ int excluded(List *list, int key) {
 	return 0;
 }
 
-void rstWorld(int **world, Room *room) {
-	for (int i=0; i < ROOM; i++) {
-		room[i].ghost = false;
-		room[i].smell = false;
-		room[i].traps = false;
-		room[i].wind  = false;
-		room[i].gold  = false;
-		room[i].lmit  = false;
-	}
-	genWorld(world,room);
-}
-
-void genWorld(int **world, Room *wroom) {
-	int qty,whell,gold,wumpus;
+void genWorld(int **world, Quad *wquad) {
+	int qty,trap,gold,ghost;
 	List *exclude = iniLst();
 	pshLst(exclude,0);
 	pshLst(exclude,1);
@@ -76,40 +58,40 @@ void genWorld(int **world, Room *wroom) {
 
 	qty = 0;
 	while (qty != 1) {
-		wumpus = GetRandomValue(0,ROOM-1);
-		if (!excluded(exclude,wumpus)) {
-			wroom[wumpus].ghost = true;
-			for (int i=0; i < ROOM; i++)
-				if (world[wumpus][i])
-					wroom[i].smell = true;
+		ghost = GetRandomValue(0,QUAD-1);
+		if (!excluded(exclude,ghost)) {
+			wquad[ghost].ghost = true;
+			for (int i=0; i < QUAD; i++)
+				if (world[ghost][i])
+					wquad[i].smell = true;
 			qty++;
 		}
 	}
 
 	qty = 0;
 	while (qty != 3) {
-		whell = GetRandomValue(0,ROOM-1);
-		if (!excluded(exclude,whell)) {
-			wroom[whell].traps = true;
-			for (int i=0; i < ROOM; i++)
-				if (world[whell][i])
-					wroom[i].wind = true;
-			pshLst(exclude,whell);
+		trap = GetRandomValue(0,QUAD-1);
+		if (!excluded(exclude,trap)) {
+			wquad[trap].traps = true;
+			for (int i=0; i < QUAD; i++)
+				if (world[trap][i])
+					wquad[i].wind = true;
+			pshLst(exclude,trap);
 			qty++;
 		}
 	}
 
 	qty = 0;
 	while (qty != 1) {
-		gold = GetRandomValue(0,ROOM-1);
+		gold = GetRandomValue(0,QUAD-1);
 		if (!excluded(exclude,gold)) {
-			wroom[gold].gold = true;
+			wquad[gold].gold = true;
 			qty++;
 		}
 	}
 
 	#ifdef DEBUG
-	prtWorld(wroom);
+	prtWorld(wquad);
 	prtLst(exclude);
 	#endif
 
@@ -129,15 +111,14 @@ void prtwchar(bool cond, char *str) {
 
 }
 
-void prtWorld(Room *room) {
+void prtWorld(Quad *quad) {
 	int barran = 0;
-	for (int i=0; i < ROOM; i++) {
-		prtwchar(room[i].ghost,CRED"W"CRSET);
-		prtwchar(room[i].smell,CRED"F"CRSET);
-		prtwchar(room[i].traps,CBLUE"P"CRSET);
-		prtwchar(room[i].wind, CBLUE"B"CRSET);
-		prtwchar(room[i].gold, CYELL"G"CRSET);
-		printf(":%d ", room[i].grau);
+	for (int i=0; i < QUAD; i++) {
+		prtwchar(quad[i].ghost,"W");
+		prtwchar(quad[i].smell,"F");
+		prtwchar(quad[i].traps,"P");
+		prtwchar(quad[i].wind, "B");
+		prtwchar(quad[i].gold, "G");
 
 		barran++;
 		if (barran == WCOL) {
@@ -148,19 +129,50 @@ void prtWorld(Room *room) {
 }
 
 void prtGraph(int **array) {
-	for (int i=0; i < ROOM; i++) {
-		for (int j=0; j < ROOM; j++)
+	for (int i=0; i < QUAD; i++) {
+		for (int j=0; j < QUAD; j++)
 			printf(" %d", array[i][j]);
+		printf(" : grau %d", getVgrau(array,i));
 		putchar(0x0A);
 	}
 }
 
 void prtAdjac(int **array) {
-	for (int i=0; i < ROOM; i++) {
+	for (int i=0; i < QUAD; i++) {
 		printf(" %d: ", i);
-		for (int j=0; j < ROOM; j++)
+		for (int j=0; j < QUAD; j++)
 			if (array[i][j])
 				printf(" %d", j);
 		putchar(0x0A);
 	}
+}
+
+void rstWorld(int **world, int **know,
+	Agent *agent, Quad *wquad, Know *aquad) {
+
+	agent->coord = START;
+	agent->score = 0;
+	agent->arrow = 1;
+	agent->grito = false;
+	agent->limit = false;
+
+	for (int i=0; i < QUAD; i++) {
+		wquad[i].ghost = false;
+		wquad[i].smell = false;
+		wquad[i].traps = false;
+		wquad[i].wind  = false;
+		wquad[i].gold  = false;
+		aquad[i].visit = false;
+		aquad[i].ghost = nope;
+		aquad[i].smell = false;
+		aquad[i].traps = nope;
+		aquad[i].wind  = false;
+		aquad[i].gold  = false;
+	}
+
+	for (int i=0; i < QUAD; i++)
+		for (int j=0; j < QUAD; j++)
+			know[i][j] = 0;
+	
+	genWorld(world,wquad);
 }

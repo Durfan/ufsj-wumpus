@@ -7,7 +7,7 @@ Agent *iniAgent(void) {
 		exit(EXIT_FAILURE);
 	}
 
-	agent->coord = 0;
+	agent->coord = START;
 	agent->score = 0;
 	agent->arrow = 1;
 	agent->grito = false;
@@ -16,56 +16,51 @@ Agent *iniAgent(void) {
 	return agent;
 }
 
-Sensor scanQuad(Agent *agent, Room *wroom) {
+Sensor scanQuad(Agent *agent, Quad *wquad) {
 	int coord = agent->coord;
 	Sensor sensor;
-	sensor.smell = wroom[coord].smell;
-	sensor.wind  = wroom[coord].wind;
-	sensor.gold  = wroom[coord].gold;
-	if (wroom[coord].grau != 4)
-		sensor.lmit = true;
-	else 
-		sensor.lmit = false;
+	sensor.smell = wquad[coord].smell;
+	sensor.wind  = wquad[coord].wind;
+	sensor.gold  = wquad[coord].gold;
 
 	return sensor;
 }
 
-void scanPath(Agent *agent, int **world, int **bknow) {
+void scanPath(Agent *agent, int **world, int **know) {
 	int coord = agent->coord;
-	for (int i=0; i < ROOM; i++)
+	for (int i=0; i < QUAD; i++)
 		if (world[coord][i])
-			bknow[coord][i] = bknow[i][coord] = 1;
+			know[coord][i] = know[i][coord] = 1;
 }
 
-void ifengine(Agent *agent, Sensor sensor, Bknow *aroom, int **bknow) {
+void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 	int coord = agent->coord;
-	bool visit,traps,mark;
-	aroom[coord].visited = true;
+	aquad[coord].visit = true;
 
 	if (sensor.smell) {
-		aroom[coord].smell = true;
-		for (int i=0; i < ROOM; i++)
-			if (bknow[coord][i] && !aroom[i].visited)
-				aroom[i].ghost = 1;
+		aquad[coord].smell = true;
+		for (int i=0; i < QUAD; i++)
+			if (know[coord][i] && !aquad[i].visit)
+				aquad[i].ghost = 1;
 	}
 
 	if (sensor.wind) {
-		aroom[coord].wind = true;
-		for (int i=0; i < ROOM; i++)
-			if (bknow[coord][i] && !aroom[i].visited)
-				aroom[i].traps = -1;
+		aquad[coord].wind = true;
+		for (int i=0; i < QUAD; i++)
+			if (know[coord][i] && !aquad[i].visit)
+				aquad[i].traps = -1;
 	}
 	else {
-		for (int i=0; i < ROOM; i++)
-			if (bknow[coord][i] && (aroom[i].traps == -1))
-				aroom[i].traps = 0;	
+		for (int i=0; i < QUAD; i++)
+			if (know[coord][i] && (aquad[i].traps == -1))
+				aquad[i].traps = 0;	
 	}
 
 }
 
 void leapofaith(Agent *agent, int **world) {
 	List *paths = iniLst();
-	for (int i=0; i < ROOM; i++) {
+	for (int i=0; i < QUAD; i++) {
 		if (world[agent->coord][i])
 			pshLst(paths,i);
 	}
@@ -78,18 +73,18 @@ void leapofaith(Agent *agent, int **world) {
 	clrLst(paths);
 }
 
-void move(Agent *agent, int room) {
-	agent->coord = room;
+void move(Agent *agent, int quad) {
+	agent->coord = quad;
 }
 
 int getpos(Agent *agent) {
 	return agent->coord;
 }
 
-int wasted(Agent *agent, Room *wroom) {
+int wasted(Agent *agent, Quad *wquad) {
 	int pos = agent->coord;
-	if (wroom[pos].ghost) return 1;
-	if (wroom[pos].traps) return 1;
+	if (wquad[pos].ghost) return 1;
+	if (wquad[pos].traps) return 1;
 	return 0;
 }
 
@@ -106,5 +101,4 @@ void prtSensor(Sensor sensor) {
 	printf("Fedor: %s\n", sensor.smell ? "Sim":"Nao");
 	printf("Brisa: %s\n", sensor.wind  ? "Sim":"Nao");
 	printf(" Ouro: %s\n", sensor.gold  ? "Sim":"Nao");
-	printf("Limit: %s\n", sensor.lmit  ? "Sim":"Nao");
 }

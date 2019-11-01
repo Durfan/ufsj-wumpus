@@ -29,11 +29,12 @@ void iniGraph(int **array) {
 	}
 }
 
-void setVgrau(int **array, Room *room) {
-	for (int i=0; i < ROOM; i++)
-		for (int j=0; j < ROOM; j++)
-			if (array[i][j])
-				room[i].grau++;
+int getVgrau(int **array, int v) {
+	int grau = 0;
+	for (int i=0; i < QUAD; i++)
+		if (array[v][i])
+			grau++;
+	return grau;
 }
 
 void freeArray(int n, int **ptr) {

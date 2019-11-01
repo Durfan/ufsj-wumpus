@@ -27,14 +27,14 @@ int main(void) {
 	Rectangle wborder = {  20,60,128,128 };
 	Rectangle aborder = { 168,60,128,128 };
 
-	Rectangle arooms[ROOM] = { 0 };
-	Rectangle wrooms[ROOM] = { 0 };
-	for (int i = 0; i < ROOM; i++) {
-		arooms[i].x =  20 + 32*(i%WCOL); // separar: '+ px*(i%WCOL)'
-		wrooms[i].x = 168 + 32*(i%WCOL); // separar: '+ px*(i/WCOL)'
-		arooms[i].y = wrooms[i].y = 60 + 32*(i/WCOL);
-		arooms[i].width = wrooms[i].width = 32;
-		arooms[i].height = wrooms[i].height = 32;
+	Rectangle aquads[QUAD] = { 0 };
+	Rectangle wquads[QUAD] = { 0 };
+	for (int i = 0; i < QUAD; i++) {
+		aquads[i].x =  20 + 32*(i%WCOL); // separar: '+ px*(i%WCOL)'
+		wquads[i].x = 168 + 32*(i%WCOL); // separar: '+ px*(i/WCOL)'
+		aquads[i].y = wquads[i].y = 60 + 32*(i/WCOL);
+		aquads[i].width = wquads[i].width = 32;
+		aquads[i].height = wquads[i].height = 32;
 	}
 
 	int currentFrame = 0;
@@ -42,16 +42,14 @@ int main(void) {
 	int framesSpeed = 8; // Number of spritesheet frames shown by second
 	SetTargetFPS(60);
 
-	Room *wroom = initRoom();
-	int **world = alocArray(ROOM,ROOM);
+	Quad *wquad = iniQuad();
+	int **world = alocArray(QUAD,QUAD);
 	iniGraph(world);
-	genWorld(world,wroom);
-	setVgrau(world,wroom);
+	genWorld(world,wquad);
 
 	Agent *agent = iniAgent();
-	Bknow *aroom = iniBknow();
-	int **bknow = alocArray(ROOM,ROOM);
-	agent->coord = 0;
+	Know *aquad = iniKnow();
+	int **know = alocArray(QUAD,QUAD);
 	Sensor sensor;
 	int posagent;
 
@@ -75,14 +73,14 @@ int main(void) {
 		}
 
 		posagent = getpos(agent);
-		if (wasted(agent,wroom)) {
+		if (wasted(agent,wquad)) {
 			StopMusicStream(music);
 			DrawText("WASTED", 210, 20, 20, RED);
 		}
 
-		sensor = scanQuad(agent,wroom);
-		scanPath(agent,world,bknow);
-		ifengine(agent,sensor,aroom,bknow);
+		sensor = scanQuad(agent,wquad);
+		scanPath(agent,world,know);
+		ifengine(agent,sensor,aquad,know);
 
 		// Draw
 		BeginDrawing();
@@ -98,44 +96,44 @@ int main(void) {
 			showInfos(sensor);
 
 			if (IsKeyPressed(KEY_R))
-				rstWorld(world,wroom);
+				rstWorld(world,know,agent,wquad,aquad);
 
 			if (IsKeyPressed(KEY_SPACE))
 				leapofaith(agent,world);
 
 			manual(agent);
 
-			for (int i = 0; i < ROOM; i++) {
-				DrawTexture(tex_floor, arooms[i].x, arooms[i].y, WHITE);
-				position.x = arooms[posagent].x;
-				position.y = arooms[posagent].y;
+			for (int i = 0; i < QUAD; i++) {
+				DrawTexture(tex_floor, aquads[i].x, aquads[i].y, WHITE);
+				position.x = aquads[posagent].x;
+				position.y = aquads[posagent].y;
 				DrawTextureRec(tex_agent,frmRecS,position,WHITE);
-				if (aroom[i].traps == -1)
-					DrawTexture(tex_dtrap, arooms[i].x, arooms[i].y, WHITE);
-				if (aroom[i].traps == 1)
-					DrawTexture(tex_trap, arooms[i].x, arooms[i].y, WHITE);
+				if (aquad[i].traps == -1)
+					DrawTexture(tex_dtrap, aquads[i].x, aquads[i].y, WHITE);
+				if (aquad[i].traps == 1)
+					DrawTexture(tex_trap, aquads[i].x, aquads[i].y, WHITE);
 			}
 
-			for (int i = 0; i < ROOM; i++) {
-				DrawTexture(tex_floor, wrooms[i].x, wrooms[i].y, WHITE);
-				position.x = wrooms[posagent].x;
-				position.y = wrooms[posagent].y;
+			for (int i = 0; i < QUAD; i++) {
+				DrawTexture(tex_floor, wquads[i].x, wquads[i].y, WHITE);
+				position.x = wquads[posagent].x;
+				position.y = wquads[posagent].y;
 				DrawTextureRec(tex_agent,frmRecS,position,WHITE);
-				if (wroom[i].gold) {
-					position.x = wrooms[i].x;
-					position.y = wrooms[i].y;
+				if (wquad[i].gold) {
+					position.x = wquads[i].x;
+					position.y = wquads[i].y;
 					DrawTextureRec(tex_gold,frmRecO,position,WHITE);
-					//DrawTexture(tex_chest, wrooms[i].x, wrooms[i].y, WHITE);
+					//DrawTexture(tex_chest, wquads[i].x, wquads[i].y, WHITE);
 				}
-				if (wroom[i].traps) {
-					position.x = wrooms[i].x;
-					position.y = wrooms[i].y;
+				if (wquad[i].traps) {
+					position.x = wquads[i].x;
+					position.y = wquads[i].y;
 					DrawTextureRec(tex_strap,frmRecO,position,WHITE);
-					//DrawTexture(tex_trap, wrooms[i].x, wrooms[i].y, WHITE);
+					//DrawTexture(tex_trap, wquads[i].x, wquads[i].y, WHITE);
 				}
-				if (wroom[i].ghost) {
-					position.x = wrooms[i].x;
-					position.y = wrooms[i].y;
+				if (wquad[i].ghost) {
+					position.x = wquads[i].x;
+					position.y = wquads[i].y;
 					DrawTextureRec(tex_wumpus,frmRecS,position,WHITE);
 				}
 			}
@@ -147,10 +145,10 @@ int main(void) {
 	}
 
 	// De-Initialization
-	freeArray(ROOM,world);
-	freeArray(ROOM,bknow);
-	free(wroom);
-	free(aroom);
+	freeArray(QUAD,world);
+	freeArray(QUAD,know);
+	free(wquad);
+	free(aquad);
 	free(agent);
 
 	UnloadTexture(tex_gold);
@@ -173,7 +171,7 @@ int main(void) {
 void manual(Agent *agent) {
 
 	if (IsKeyPressed(KEY_DOWN)) {
-		if (agent->coord < (ROOM-WROW)) {
+		if (agent->coord < (QUAD-WROW)) {
 			agent->coord += WROW;
 			agent->score -= 1;
 		}
@@ -183,7 +181,7 @@ void manual(Agent *agent) {
 			agent->score -= 1;
 		}
 	} else if (IsKeyPressed(KEY_RIGHT)) {
-		if (agent->coord < ROOM) {
+		if (agent->coord < QUAD) {
 			agent->coord += 1;
 			agent->score -= 1;
 		}
