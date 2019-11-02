@@ -23,6 +23,6 @@ Compilar com o bash script incluindo o path do raylib source :
 ./build.sh
 ```
 
-## Dependências
+## Dependências/Librarys
 
-* [raylib](https://github.com/raysan5/raylib) A simple and easy-to-use library to enjoy videogames programming
+[![raylib](https://github.com/Durfan/ufsj-wumpus/blob/master/docs/logo_raylib.png)](https://github.com/raysan5/raylib)
