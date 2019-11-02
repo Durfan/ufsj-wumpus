@@ -8,7 +8,7 @@
     SOURCES="src/*.c"
 
     # Set your raylib/src location here (relative path!)
-    RAYLIB_SRC="raylib-2.5.0/src"
+    RAYLIB_SRC="vendor/raylib"
 
     # About this build script: it does many things, but in essence, it's
     # very simple. It has 3 compiler invocations: building raylib (which
