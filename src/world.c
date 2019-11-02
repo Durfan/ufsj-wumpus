@@ -152,7 +152,9 @@ void rstWorld(int **world, int **know,
 	Agent *agent, Quad *wquad, Know *aquad) {
 
 	agent->coord = START;
+	agent->lives = true;
 	agent->score = 0;
+	agent->ghost = 0;
 	agent->arrow = 1;
 	agent->grito = false;
 	agent->limit = false;

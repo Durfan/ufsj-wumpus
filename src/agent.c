@@ -10,6 +10,7 @@ Agent *iniAgent(void) {
 	agent->coord = START;
 	agent->lives = true;
 	agent->score = 0;
+	agent->ghost = 0;
 	agent->arrow = 1;
 	agent->grito = false;
 	agent->limit = false;
@@ -20,6 +21,7 @@ Agent *iniAgent(void) {
 void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 	int coord = agent->coord;
 	aquad[coord].visit = true;
+	TriBol setinf;
 	bool visited;
 
 	if (agent->lives) {
@@ -32,25 +34,32 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 	
 	if (sensor.smell) {
 		aquad[coord].smell = true;
-		for (int i=0; i < QUAD; i++) {
-			visited = aquad[i].visit;
-			if (know[coord][i] && !visited)
-				aquad[i].ghost = talvez;
+		if (!agent->ghost) {
+			for (int i=0; i < QUAD; i++) {
+				setinf  = aquad[i].ghost;
+				visited = aquad[i].visit;
+				if (know[coord][i] &&
+					(setinf == noinf) && !visited)
+					aquad[i].ghost = talvez;
+			}
 		}
 	}
 	else {
 		aquad[coord].smell = false;
-		for (int i=0; i < QUAD; i++) {
-			if (know[coord][i])
-				aquad[i].ghost = nope;
+		if (!agent->ghost) {
+			for (int i=0; i < QUAD; i++)
+				if (know[coord][i])
+					aquad[i].ghost = nope;
 		}
 	}
 
 	if (sensor.wind) {
 		aquad[coord].wind = true;
 		for (int i=0; i < QUAD; i++) {
+			setinf  = aquad[i].traps;
 			visited = aquad[i].visit;
-			if (know[coord][i] && !visited)
+			if (know[coord][i] &&
+				(setinf == noinf) && !visited)
 				aquad[i].traps = talvez;
 		}
 	}
@@ -62,29 +71,69 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 		}
 	}
 
-	confirm(aquad,know);
-
+	if (!agent->ghost)
+		chkghost(agent,aquad,know);
+	chktraps(aquad,know);
 }
 
-void confirm(Know *aquad, int **know) {
-	int path,count = 0;
-	int quad = -1;
-	bool found = false;
-	TriBol info;
+void chkghost(Agent *agent, Know *aquad, int **know) {
+	bool found  = false;
+	TriBol ginfo;
 
 	for (int i=0; i < QUAD; i++) {
-		path = getVgrau(know,i);
-		info = aquad[i].ghost;
-		if ((info == talvez) && (path >= 2) && !found) {
+		found = false;
+		ginfo = aquad[i].ghost;
+		if ((ginfo == talvez) && (getVgrau(know,i) >= 2)) {
 			for (int j=0; j < QUAD; j++) {
-				if (know[i][j] && aquad[j].smell == true) {
-					printf("%d %d\n", i, count);
+				if (know[i][j] && !aquad[j].smell)
 					found = false;
-					count++;
-				}
+				else found = true;
 			}
 		}
+		if (found) {
+			agent->ghost = i;
+			aquad[i].ghost = certeza;
+		}
 	}
+
+	if (agent->ghost)
+		for (int i=0; i < QUAD; i++) {
+			ginfo = aquad[i].ghost;
+			if (ginfo == talvez || ginfo == noinf)
+				aquad[i].ghost = nope;
+	}
+}
+
+void chktraps(Know *aquad, int **know) {
+	bool found  = false;
+	TriBol ginfo;
+
+	for (int i=0; i < QUAD; i++) {
+		found = false;
+		ginfo = aquad[i].traps;
+		if ((ginfo == talvez) && (getVgrau(know,i) >= 3)) {
+			for (int j=0; j < QUAD; j++) {
+				if (know[i][j] && !aquad[j].wind)
+					found = false;
+				else found = true;
+			}
+		}
+		if (found)
+			aquad[i].traps = certeza;
+	}
+}
+
+int boundary(int v) {
+	bool boundary;
+	for (int i = 0; i < WROW; i++) { 
+		for (int j = 0; j < WCOL; j++) { 
+			if (v == (i == WCOL - 1 || j == WCOL - 1))
+				boundary = true;
+			else
+				boundary = false;
+		}
+	}
+	return boundary;
 }
 
 void leapofaith(Agent *agent, int **world) {

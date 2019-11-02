@@ -108,7 +108,6 @@ int main(void) {
 		if (IsKeyPressed(KEY_R)) {
 			rstWorld(world,know,agent,wquad,aquad);
 			PlayMusicStream(music);
-			agent->lives = true;
 		}
 
 		if (IsKeyPressed(KEY_SPACE))
@@ -128,8 +127,9 @@ int main(void) {
 			DrawText("Aperte r para resetar",20,205,10,DARKGRAY);
 			DrawText("Aperte [spacebar] para avançar",20,215,10,DARKGRAY);
 
-			DrawText(FormatText("Q%02d L%02d A%02d G%02d",
-				agent->coord, agent->limit, agent->arrow, agent->grito),
+			DrawText(FormatText("Q%02d L%02d A%02d G%02d W%02d",
+				agent->coord, agent->limit, agent->arrow,
+				agent->grito, agent->ghost),
 				190,15,10,DARKGRAY);
 
 			DrawText(FormatText("W%02d S%02d G%02d",
