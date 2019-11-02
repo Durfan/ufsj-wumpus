@@ -23,6 +23,7 @@ typedef struct quad_t {
 
 typedef struct know_t {
 	bool visit;
+	int paths;
 	TriBol ghost;
 	bool smell;
 	TriBol traps;

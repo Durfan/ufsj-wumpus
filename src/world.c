@@ -27,6 +27,7 @@ Know *iniKnow(void) {
 
 	for (int i=0; i < QUAD; i++) {
 		quad[i].visit = false;
+		quad[i].paths = 0;
 		quad[i].ghost = noinf;
 		quad[i].smell = false;
 		quad[i].traps = noinf;
@@ -166,6 +167,7 @@ void rstWorld(int **world, int **know,
 		wquad[i].wind  = false;
 		wquad[i].gold  = false;
 		aquad[i].visit = false;
+		aquad[i].paths = 0;
 		aquad[i].ghost = noinf;
 		aquad[i].smell = false;
 		aquad[i].traps = noinf;

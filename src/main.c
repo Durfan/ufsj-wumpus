@@ -5,10 +5,14 @@ void manual(Agent *agent);
 int main(void) {
 
 	setlocale(LC_ALL,"");
-	srand(time(NULL));
+	//SetConfigFlags(FLAG_SHOW_LOGO);
+
 	InitWindow(320,240,"World of Wumpus Reloaded");
 	InitAudioDevice();
 
+	Image icon = LoadImage("resources/icon.png");
+	SetWindowIcon(icon);
+	
 	Music music = LoadMusicStream("resources/snd_mgear.ogg");
 	Sound dead  = LoadSound("resources/snd_scream.ogg");
 	PlayMusicStream(music);
@@ -57,6 +61,7 @@ int main(void) {
 	Sensor sensor;
 	int **know = alocArray(QUAD,QUAD);
 	int posagent;
+	float time;
 
 	#ifdef DEBUG
 	prtGraph(world);
@@ -67,6 +72,9 @@ int main(void) {
 	while (!WindowShouldClose()) {
 		// Update variables
 		UpdateMusicStream(music);
+
+		if (agent->lives)
+			time += GetFrameTime();
 
 		framesCounter++;
 
@@ -83,7 +91,7 @@ int main(void) {
 
 		if (wasted(agent,wquad)) {
 			StopMusicStream(music);
-			DrawText("WASTED!",190,35,10,RED);
+			DrawText("WASTED!",100,45,10,RED);
 			framesCounter = 0;
 			if (agent->lives) {
 				agent->lives = false;
@@ -92,7 +100,7 @@ int main(void) {
 			}
 		} else if (winner(agent,aquad)) {
 			StopMusicStream(music);
-			DrawText("WINNER!",190,35,10,ORANGE);
+			DrawText("WINNER!",100,45,10,ORANGE);
 			framesCounter = 0;
 			if (agent->lives) {
 				agent->lives = false;
@@ -101,11 +109,12 @@ int main(void) {
 		}
 
 		sensor = scanQuad(agent,wquad);
-		scanPath(agent,world,know);
-		scanLimt(agent,know);
+		scanPath(agent,world,know,aquad);
+		scanLimt(agent,aquad);
 		ifengine(agent,sensor,aquad,know);
 
 		if (IsKeyPressed(KEY_R)) {
+			time = 0;
 			rstWorld(world,know,agent,wquad,aquad);
 			PlayMusicStream(music);
 		}
@@ -130,11 +139,11 @@ int main(void) {
 			DrawText(FormatText("Q%02d L%02d A%02d G%02d W%02d",
 				agent->coord, agent->limit, agent->arrow,
 				agent->grito, agent->ghost),
-				190,15,10,DARKGRAY);
-
-			DrawText(FormatText("W%02d S%02d G%02d",
-				sensor.wind, sensor.smell, sensor.gold),
-				190,25,10,DARKGRAY);
+				180,15,10,DARKGRAY);
+			DrawText(FormatText("W%02d S%02d G%02d P%02d",
+				sensor.wind, sensor.smell, sensor.gold, aquad[posagent].paths),
+				180,25,10,DARKGRAY);
+			DrawText(FormatText("T %02.02f",time),180,35,10,DARKGRAY);
 
 			showInfos(sensor);
 
@@ -228,7 +237,7 @@ void manual(Agent *agent) {
 			agent->score -= 1;
 		}
 	} else if (IsKeyPressed(KEY_RIGHT)) {
-		if (agent->coord < QUAD) {
+		if (agent->coord < QUAD-1) {
 			agent->coord += 1;
 			agent->score -= 1;
 		}

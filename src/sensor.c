@@ -14,15 +14,21 @@ int scanCord(Agent *agent) {
 	return agent->coord;
 }
 
-void scanPath(Agent *agent, int **world, int **know) {
+void scanPath(Agent *agent, int **world, int **know, Know *aquad) {
 	int coord = agent->coord;
-	for (int i=0; i < QUAD; i++)
-		if (world[coord][i])
+	if (aquad[coord].visit) return;
+
+	for (int i=0; i < QUAD; i++) {
+		if (world[coord][i]) {
 			know[coord][i] = know[i][coord] = 1;
+			aquad[coord].paths++;
+		}
+	}
 }
 
-int scanLimt(Agent *agent, int **know) {
-	if (getVgrau(know,agent->coord) == 4) {
+int scanLimt(Agent *agent, Know *aquad) {
+	int coord = agent->coord;
+	if (aquad[coord].paths == 4) {
 		agent->limit = false;
 		return 0;
 	}
@@ -39,16 +45,8 @@ int getVgrau(int **array, int v) {
 }
 
 void showInfos(Sensor sensor) {
-	if (sensor.smell)
-		DrawText("PERIGO!", 100, 40, 10, RED);
-	else if (sensor.wind)
-		DrawText("PERIGO!", 100, 40, 10, RED);
-	else if (sensor.gold)
-		DrawText("OURO!!!", 100, 40, 10, ORANGE);
-}
-
-void prtSensor(Sensor sensor) {
-	printf("Fedor: %s\n", sensor.smell ? "Sim":"Nao");
-	printf("Brisa: %s\n", sensor.wind  ? "Sim":"Nao");
-	printf(" Ouro: %s\n", sensor.gold  ? "Sim":"Nao");
+	if (sensor.gold)
+		DrawText("OURO!!!",100,35,10,ORANGE);
+	else if (sensor.smell || sensor.wind)
+		DrawText("PERIGO!",100,35,10,RED);
 }
