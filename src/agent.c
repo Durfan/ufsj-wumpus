@@ -62,20 +62,27 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 		}
 	}
 
-	//confirm(aquad,know);
+	confirm(aquad,know);
 
 }
 
 void confirm(Know *aquad, int **know) {
+	int path,count = 0;
+	int quad = -1;
+	bool found = false;
+	TriBol info;
+
 	for (int i=0; i < QUAD; i++) {
-		if (aquad[i].ghost == talvez) {
-			printf("%d : ", i);
+		path = getVgrau(know,i);
+		info = aquad[i].ghost;
+		if ((info == talvez) && (path >= 2) && !found) {
 			for (int j=0; j < QUAD; j++) {
-				if (know[i][j]) {
-					printf("%d ", j);
+				if (know[i][j] && aquad[j].smell == true) {
+					printf("%d %d\n", i, count);
+					found = false;
+					count++;
 				}
 			}
-			printf("\n");
 		}
 	}
 }
