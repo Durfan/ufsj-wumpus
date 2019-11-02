@@ -4,7 +4,7 @@
 
 Trabalho prático desenvolvido para a disciplina de Inteligência Artificial da UFSJ.
 
->O Mundo de Wumpus é um  jogo antigo de computador considerado um domínio (ambiente) artificial que fornece grande motivação para o >raciocínio lógico. Apesar de parecer um jogo muito simples quando comparado aos jogos modernos de computador, o Mundo de Wumpus é >um excelente ambiente de teste para agentes inteligentes.(...) [ime.usp.br/~leliane](https://www.ime.usp.br/~leliane/IAcurso2000/Wumpus.html)
+>O Mundo de Wumpus é um  jogo antigo de computador considerado um domínio (ambiente) artificial que fornece grande motivação para o raciocínio lógico. Apesar de parecer um jogo muito simples quando comparado aos jogos modernos de computador, o Mundo de Wumpus é um excelente ambiente de teste para agentes inteligentes.(...) [ime.usp.br/~leliane](https://www.ime.usp.br/~leliane/IAcurso2000/Wumpus.html)
 
 ## Compilando
 
