@@ -23,6 +23,6 @@ Compilar com o bash script incluindo o path do raylib source :
 ./build.sh
 ```
 
-## Dependências/Librarys
+## Dependências/libraries
 
 [![raylib](https://github.com/Durfan/ufsj-wumpus/blob/master/docs/logo_raylib.png)](https://github.com/raysan5/raylib)
