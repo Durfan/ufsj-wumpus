@@ -8,6 +8,7 @@ Agent *iniAgent(void) {
 	}
 
 	agent->coord = START;
+	agent->lives = true;
 	agent->score = 0;
 	agent->arrow = 1;
 	agent->grito = false;
@@ -20,7 +21,11 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 	int coord = agent->coord;
 	aquad[coord].visit = true;
 	bool visited;
-	TriBol setinf;
+
+	if (agent->lives) {
+		aquad[coord].traps = nope;
+		aquad[coord].ghost = nope;
+	}
 
 	if (sensor.gold)
 		aquad[coord].gold = true;
@@ -28,16 +33,14 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 	if (sensor.smell) {
 		aquad[coord].smell = true;
 		for (int i=0; i < QUAD; i++) {
-			setinf  = aquad[i].ghost;
 			visited = aquad[i].visit;
-			if (know[coord][i] && (setinf == noinf) && !visited)
+			if (know[coord][i] && !visited)
 				aquad[i].ghost = talvez;
 		}
 	}
 	else {
 		aquad[coord].smell = false;
 		for (int i=0; i < QUAD; i++) {
-			setinf = aquad[i].ghost;
 			if (know[coord][i])
 				aquad[i].ghost = nope;
 		}
@@ -46,36 +49,33 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 	if (sensor.wind) {
 		aquad[coord].wind = true;
 		for (int i=0; i < QUAD; i++) {
-			setinf  = aquad[i].traps;
 			visited = aquad[i].visit;
-			if (know[coord][i] && (setinf == noinf) && !visited)
+			if (know[coord][i] && !visited)
 				aquad[i].traps = talvez;
 		}
 	}
 	else {
 		aquad[coord].wind = false;
 		for (int i=0; i < QUAD; i++) {
-			setinf = aquad[i].traps;
 			if (know[coord][i])
 				aquad[i].traps = nope;
 		}
 	}
 
+	//confirm(aquad,know);
+
 }
 
-void confirm(int maybe, Know *aquad, int **know, int type) {
-	bool check;
+void confirm(Know *aquad, int **know) {
 	for (int i=0; i < QUAD; i++) {
-		switch (type) {
-		case 0:
-			check = aquad[i].wind;
-			break;
-		case 1:
-			check = aquad[i].smell;
-			break;
-		}
-		if (know[i][maybe] && check) {
-			aquad[maybe].traps = certeza;
+		if (aquad[i].ghost == talvez) {
+			printf("%d : ", i);
+			for (int j=0; j < QUAD; j++) {
+				if (know[i][j]) {
+					printf("%d ", j);
+				}
+			}
+			printf("\n");
 		}
 	}
 }
@@ -103,5 +103,11 @@ int wasted(Agent *agent, Quad *wquad) {
 	int pos = agent->coord;
 	if (wquad[pos].ghost) return 1;
 	if (wquad[pos].traps) return 1;
+	return 0;
+}
+
+int winner(Agent *agent, Know *aquad) {
+	int pos = agent->coord;
+	if (aquad[pos].gold) return 1;
 	return 0;
 }

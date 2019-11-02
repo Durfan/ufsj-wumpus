@@ -55,7 +55,6 @@ int main(void) {
 	Agent *agent = iniAgent();
 	Know *aquad = iniKnow();
 	Sensor sensor;
-	bool lives = true;
 	int **know = alocArray(QUAD,QUAD);
 	int posagent;
 
@@ -82,14 +81,22 @@ int main(void) {
 
 		posagent = scanCord(agent);
 
-		if (wasted(agent,wquad) == 1) {
+		if (wasted(agent,wquad)) {
 			StopMusicStream(music);
 			DrawText("WASTED!",190,35,10,RED);
 			framesCounter = 0;
-			if (lives) {
+			if (agent->lives) {
+				agent->lives = false;
 				agent->score -= 1000;
 				PlaySound(dead);
-				lives = false;
+			}
+		} else if (winner(agent,aquad)) {
+			StopMusicStream(music);
+			DrawText("WINNER!",190,35,10,ORANGE);
+			framesCounter = 0;
+			if (agent->lives) {
+				agent->lives = false;
+				agent->score += 1000;
 			}
 		}
 
@@ -101,7 +108,7 @@ int main(void) {
 		if (IsKeyPressed(KEY_R)) {
 			rstWorld(world,know,agent,wquad,aquad);
 			PlayMusicStream(music);
-			lives = true;
+			agent->lives = true;
 		}
 
 		if (IsKeyPressed(KEY_SPACE))
@@ -149,11 +156,13 @@ int main(void) {
 					DrawTextureRec(texewind,frmRecO,position,WHITE);
 				if (aquad[i].smell)
 					DrawTextureRec(texesmel,frmRecO,position,WHITE);
-				if (aquad[i].ghost == -1)
+				if (aquad[i].ghost == talvez)
 					DrawTexture(texghosd,aquads[i].x,aquads[i].y,WHITE);
-				if (aquad[i].traps == -1)
+				if (aquad[i].ghost == certeza)
+					DrawTextureRec(texghost,frmRecS,position,WHITE);
+				if (aquad[i].traps == talvez)
 					DrawTexture(textrapd,aquads[i].x,aquads[i].y,WHITE);
-				if (aquad[i].traps == 1)
+				if (aquad[i].traps == certeza)
 					DrawTexture(textrapf,aquads[i].x,aquads[i].y,WHITE);
 			}
 

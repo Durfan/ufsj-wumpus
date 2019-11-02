@@ -6,6 +6,7 @@ typedef enum { talvez=-1, nope, certeza, noinf } TriBol;
 typedef struct agent_t {
 	int coord;
 	int score;
+	bool lives;
 	bool arrow;
 	bool grito;
 	bool limit;
