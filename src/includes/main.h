@@ -20,6 +20,7 @@
 
 #include "linkedlst.h"
 #include "structs.h"
+#include "game.h"
 #include "sensor.h"
 #include "util.h"
 #include "world.h"
