@@ -1,4 +1,4 @@
-#include "includes/main.h"
+#include "main.h"
 
 Texture2D *texassets(void) {
 	Texture2D *texture = malloc(TEXTR * sizeof(Texture2D));

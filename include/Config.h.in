@@ -1,0 +1,2 @@
+#define wumpus_VERSION_MAJOR @wumpus_VERSION_MAJOR@
+#define wumpus_VERSION_MINOR @wumpus_VERSION_MINOR@

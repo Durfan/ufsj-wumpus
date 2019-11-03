@@ -1,4 +1,4 @@
-#include "includes/main.h"
+#include "main.h"
 
 int **alocArray(int n, int m) {
 	int **array = calloc(n,sizeof(int*));

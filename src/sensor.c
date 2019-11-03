@@ -1,4 +1,4 @@
-#include "includes/main.h"
+#include "main.h"
 
 Sensor scanQuad(Agent *agent, Quad *wquad) {
 	int coord = agent->coord;

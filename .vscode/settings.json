@@ -7,6 +7,9 @@
         "raygui.h": "c",
         "cmath": "c",
         "structs.h": "c",
-        "game.h": "c"
+        "game.h": "c",
+        "stdlib.h": "c",
+        "*.in": "cpp",
+        "locale.h": "c"
     }
 }

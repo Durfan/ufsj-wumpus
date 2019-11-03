@@ -1,4 +1,4 @@
-#include "includes/main.h"
+#include "main.h"
 
 Agent *iniAgent(void) {
 	Agent *agent = malloc(sizeof(Agent));

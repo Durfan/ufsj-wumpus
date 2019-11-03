@@ -1,4 +1,4 @@
-#include "includes/main.h"
+#include "main.h"
 
 Quad *iniQuad(void) {
 	Quad *quad = malloc(QUAD * sizeof(Quad));
