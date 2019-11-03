@@ -6,7 +6,6 @@ Agent *iniAgent(void);
 void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know);
 void chkghost(Agent *agent, Know *aquad, int **know);
 void chktraps(Know *aquad, int **know);
-int boundary(int v);
 void leapofaith(Agent *agent, int **world);
 void move(Agent *agent, int quad);
 

@@ -123,19 +123,6 @@ void chktraps(Know *aquad, int **know) {
 	}
 }
 
-int boundary(int v) {
-	bool boundary;
-	for (int i=0; i < WROW; i++) { 
-		for (int j=0; j < WCOL; j++) { 
-			if (v == (i == WCOL - 1 || j == WCOL - 1))
-				boundary = true;
-			else
-				boundary = false;
-		}
-	}
-	return boundary;
-}
-
 void leapofaith(Agent *agent, int **world) {
 	List *paths = iniLst();
 	for (int i=0; i < QUAD; i++) {

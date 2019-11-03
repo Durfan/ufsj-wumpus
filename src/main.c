@@ -20,7 +20,7 @@ int main(void) {
 
 	Rectangle frmRecS = {   0, 0, 32, 32 };
 	Rectangle frmRecO = {   0, 0, 32, 32 };
-	Rectangle frmRecK = {   0, 0, 48, 48 };
+	//Rectangle frmRecK = {   0, 0, 48, 48 };
 	Rectangle wborder = {  20,60,128,128 };
 	Rectangle aborder = { 168,60,128,128 };
 
@@ -65,7 +65,7 @@ int main(void) {
 			if (currentFrame > 5)
 				currentFrame = 0;
 			frmRecS.x = currentFrame * 32;
-			frmRecK.x = currentFrame * 48;
+			//frmRecK.x = currentFrame * 48;
 			frmRecO.x = (currentFrame/2) * 32;
 		}
 
