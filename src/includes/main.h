@@ -10,6 +10,7 @@
 #define WROW 4
 #define WCOL 4
 #define START 0
+#define TEXTR 13
 
 #include <stdio.h>
 #include <stdlib.h>

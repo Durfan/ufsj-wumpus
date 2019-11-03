@@ -1,7 +1,7 @@
 #include "includes/main.h"
 
 Texture2D *texassets(void) {
-	Texture2D *texture = malloc(12 * sizeof(Texture2D));
+	Texture2D *texture = malloc(TEXTR * sizeof(Texture2D));
 	texture[0]  = LoadTexture("resources/gold.png");
 	texture[1]  = LoadTexture("resources/agent.png");
 	texture[2]  = LoadTexture("resources/ghost.png");
@@ -14,6 +14,7 @@ Texture2D *texassets(void) {
 	texture[9]  = LoadTexture("resources/floor.png");
 	texture[10] = LoadTexture("resources/hwter.png");
 	texture[11] = LoadTexture("resources/lvbar.png");
+	texture[12] = LoadTexture("resources/ekill.png");
 	return texture;
 }
 
@@ -29,7 +30,7 @@ Rectangle *drawArray(int x) {
 }
 
 void clrTxtres(Texture2D *texture) {
-	for (int i=0; i < 12; i++)
+	for (int i=0; i < TEXTR; i++)
 		UnloadTexture(texture[i]);
 	free(texture);
 }
