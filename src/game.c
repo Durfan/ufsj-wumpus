@@ -35,24 +35,25 @@ void clrTxtres(Texture2D *texture) {
 }
 
 void manual(Agent *agent) {
+	int coord = agent->coord;
 
 	if (IsKeyPressed(KEY_DOWN)) {
-		if (agent->coord < (QUAD-WROW)) {
+		if (coord < (QUAD-WROW)) {
 			agent->coord += WROW;
 			agent->score -= 1;
 		}
 	} else if (IsKeyPressed(KEY_UP)) {
-		if (agent->coord > 0) {
+		if (coord > 0) {
 			agent->coord -= WROW;
 			agent->score -= 1;
 		}
 	} else if (IsKeyPressed(KEY_RIGHT)) {
-		if (agent->coord < QUAD-1) {
+		if (coord < (((coord/WROW)+1) * WCOL)-1) {
 			agent->coord += 1;
 			agent->score -= 1;
 		}
 	} else if (IsKeyPressed(KEY_LEFT)) {
-		if (agent->coord > 0) {
+		if (coord > ((coord/WROW) * WCOL)) {
 			agent->coord -= 1;
 			agent->score -= 1;
 		}
