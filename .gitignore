@@ -9,6 +9,7 @@
 *.userosscache
 *.sln.docstates
 wumpus
+build/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
