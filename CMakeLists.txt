@@ -31,6 +31,8 @@ endif()
 
 # This is the main part:
 
+file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
+
 include_directories(
   ${PROJECT_SOURCE_DIR}/src/includes
   ${PROJECT_SOURCE_DIR}/src
@@ -44,5 +46,3 @@ file(GLOB all_SRCS
 add_executable(${PROJECT_NAME} ${all_SRCS})
 set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
-
-# That's it! You should have an example executable that you can run. Have fun!
