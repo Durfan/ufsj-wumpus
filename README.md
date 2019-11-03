@@ -8,31 +8,11 @@ Trabalho prático desenvolvido para a disciplina de Inteligência Artificial da 
 
 ## Compilando
 
-Compilar com raylib pre-instalado como library:
-
 ``` bash
+mkdir build && cd build
+cmake ../
 make
-make debug # binario com debug
-make clean # remover binario
 ./wumpus # binario
-```
-
-Compilar com o bash script incluindo o path do raylib source :
-
-``` bash
-./build.sh
-```
-
-``` console
-"Usage: ./build.sh [-hdusrcqq]"
--h  Show this information"
--d  Faster builds that have debug symbols, and enable warnings"
--u  Run upx* on the executable after compilation (before -r)"
--s  Run strip on the executable after compilation (before -r)"
--r  Run the executable after compilation"
--c  Remove the temp/(debug|release) directory, ie. full recompile"
--q  Suppress this script's informational prints"
--qq Suppress all prints, complete silence (> /dev/null 2>&1)"
 ```
 
 ## Dependências/libraries
