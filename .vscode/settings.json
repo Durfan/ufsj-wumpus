@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "main.h": "c",
+        "array": "c",
+        "linkedlst.h": "c",
+        "raylib.h": "c",
+        "raygui.h": "c",
+        "cmath": "c",
+        "structs.h": "c",
+        "game.h": "c"
+    }
+}

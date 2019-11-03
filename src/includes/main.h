@@ -17,11 +17,11 @@
 #include <stdbool.h>
 #include <locale.h>
 #include <errno.h>
-#include <raylib.h>
+#include "raylib.h"
 
-#include "linkedlst.h"
 #include "structs.h"
 #include "game.h"
+#include "linkedlst.h"
 #include "sensor.h"
 #include "util.h"
 #include "world.h"
