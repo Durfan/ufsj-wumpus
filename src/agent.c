@@ -131,7 +131,7 @@ List *leapofaith(Agent *agent, Know *aquad ,int **world, List *stateList, List *
 		prtLst(route);
 		int moveto = lstidxR(route, 0);
 		move(agent, moveto);
-		agent->score -= 10000;
+		agent->score -= 1;
 	}else if(!lstnil(stateList)){
 		while(lstnil(route) && !lstnil(stateList)){
 			target = lstidxR(stateList, stateList->size-1);
@@ -145,7 +145,7 @@ List *leapofaith(Agent *agent, Know *aquad ,int **world, List *stateList, List *
 		if(!lstnil(route)){
 			int moveto = lstidxR(route, 0);
 			move(agent, moveto);
-			agent->score -= 10000;
+			agent->score -= 1;
 			}
 
 	}else{
@@ -382,25 +382,17 @@ int agentAtackAdj(Agent *agent, int target, Quad *wquad, Know *aquad){
 	if(agent->arrow){
 		int coord = agent->coord;
 		if((target % WCOL) == (coord % WCOL)){// Mesma linha
-			// atira flecha em direcao a SetTargetFPS
 			if((coord - target) < 0){// sentido crescente
-			//	ArrowMoviment(wquad, agent->coord%WCOL, WCOL, 1, aquad, agent);
-
 				ArrowMoviment(wquad, agent->coord/WCOL, WCOL, 4, aquad, agent, coord);
 			}else{// sentido decrescente
-			//	ArrowMoviment(wquad, 0, (agent->coord%WCOL)+1, 4, aquad, agent);
 				ArrowMoviment(wquad, 0, agent->coord/WCOL, 4, aquad, agent, coord);
 			}
 			agent->arrow = false;
 			return 1;
 		}else if(target / WCOL == agent->coord / WCOL){// mesma coluna
 			if((coord - target) < 0){
-			//	ArrowMoviment(wquad, agent->coord/WCOL, WCOL, 4, aquad, agent);
-
 				ArrowMoviment(wquad, agent->coord%WCOL, WCOL, 1, aquad, agent, coord);
 			}else{
-		//		ArrowMoviment(wquad, 0, (agent->coord/WCOL)+1, 4, aquad, agent);
-
 				ArrowMoviment(wquad, 0, agent->coord%WCOL, 4, aquad, agent, coord);
 			}
 			agent->arrow = false;
