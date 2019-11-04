@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 int main(void) {
 
 	setlocale(LC_ALL,"");
@@ -10,7 +11,7 @@ int main(void) {
 
 	Image icon = LoadImage("resources/icon.png");
 	SetWindowIcon(icon);
-	
+
 	Music music = LoadMusicStream("resources/snd_mgear.ogg");
 	Sound dead  = LoadSound("resources/snd_scream.ogg");
 	PlayMusicStream(music);
@@ -49,6 +50,13 @@ int main(void) {
 	prtAdjac(world);
 	#endif
 
+	int target;
+	List *stateList = iniLst();
+	List *route = iniLst();
+	for(int i = 1; i < QUAD; i++) pshLst(stateList, i);
+
+
+	prtLst(stateList);
 	// Main game loop
 	while (!WindowShouldClose()) {
 		// Update variables
@@ -95,15 +103,16 @@ int main(void) {
 		scanLimt(agent,aquad);
 		ifengine(agent,sensor,aquad,know);
 
+
 		if (IsKeyPressed(KEY_R)) {
 			time = 0;
 			rstWorld(world,know,agent,wquad,aquad);
 			PlayMusicStream(music);
 		}
 
-		if (IsKeyPressed(KEY_SPACE))
-			leapofaith(agent,world);
-
+		if (IsKeyPressed(KEY_SPACE)){
+			route = leapofaith(agent, aquad, world, stateList, route);
+		}
 		manual(agent);
 
 		// Draw
@@ -176,6 +185,7 @@ int main(void) {
 			DrawRectangleLinesEx(aborder,2,DARKGRAY);
 
 		EndDrawing();
+
 	}
 
 	// De-Initialization
