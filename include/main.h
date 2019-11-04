@@ -23,6 +23,7 @@
 #include "util.h"
 #include "world.h"
 #include "agent.h"
+#include "vitor.h"
 
 //#pragma message __FILE__
 #endif // INCLUDE_MAIN_H

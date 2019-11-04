@@ -6,10 +6,9 @@ Agent *iniAgent(void);
 void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know);
 void chkghost(Agent *agent, Know *aquad, int **know);
 void chktraps(Know *aquad, int **know);
-void leapofaith(Agent *agent, int **world);
 void move(Agent *agent, int quad);
 
-int wasted(Agent *agent, Quad *wquad);
+int wasted(Agent *agent, Know *aquad, Quad *wquad);
 int winner(Agent *agent, Know *aquad);
 
 //#pragma message __FILE__

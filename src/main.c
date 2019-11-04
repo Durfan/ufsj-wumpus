@@ -49,6 +49,10 @@ int main(void) {
 	prtAdjac(world);
 	#endif
 
+	List *route = iniLst();
+	List *stateList = iniLst();
+	iniSttes(stateList);
+
 	// Main game loop
 	while (!WindowShouldClose()) {
 		// Update variables
@@ -71,7 +75,7 @@ int main(void) {
 
 		posagent = scanCord(agent);
 
-		if (wasted(agent,wquad)) {
+		if (wasted(agent,aquad,wquad)) {
 			StopMusicStream(music);
 			DrawText("WASTED!",100,45,10,RED);
 			framesCounter = 0;
@@ -98,11 +102,12 @@ int main(void) {
 		if (IsKeyPressed(KEY_R)) {
 			time = 0;
 			rstWorld(world,know,agent,wquad,aquad);
+			iniSttes(stateList);
 			PlayMusicStream(music);
 		}
 
 		if (IsKeyPressed(KEY_SPACE))
-			leapofaith(agent,world);
+			route = vitor(agent,aquad,world,stateList,route);
 
 		manual(agent);
 
@@ -181,6 +186,8 @@ int main(void) {
 	// De-Initialization
 	freeArray(QUAD,world);
 	freeArray(QUAD,know);
+	clrLst(route);
+	clrLst(stateList);
 	free(wquad);
 	free(wquads);
 	free(aquad);

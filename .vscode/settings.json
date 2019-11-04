@@ -10,6 +10,7 @@
         "game.h": "c",
         "stdlib.h": "c",
         "*.in": "cpp",
-        "locale.h": "c"
+        "locale.h": "c",
+        "list": "c"
     }
 }

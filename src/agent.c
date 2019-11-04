@@ -123,29 +123,20 @@ void chktraps(Know *aquad, int **know) {
 	}
 }
 
-void leapofaith(Agent *agent, int **world) {
-	List *paths = iniLst();
-	for (int i=0; i < QUAD; i++) {
-		if (world[agent->coord][i])
-			pshLst(paths,i);
-	}
-
-	int rndmov = GetRandomValue(0,paths->size-1);
-	int moveto = lstidx(paths,rndmov);
-	move(agent,moveto);
-	agent->score -= 1;
-
-	clrLst(paths);
-}
-
 void move(Agent *agent, int quad) {
 	agent->coord = quad;
 }
 
-int wasted(Agent *agent, Quad *wquad) {
+int wasted(Agent *agent, Know *aquad, Quad *wquad) {
 	int pos = agent->coord;
-	if (wquad[pos].ghost) return 1;
-	if (wquad[pos].traps) return 1;
+	if (wquad[pos].ghost) {
+		aquad[pos].ghost = 1;
+		return 1;
+	}
+	if (wquad[pos].traps) {
+		aquad[pos].traps = 1;
+		return 1;
+	}
 	return 0;
 }
 

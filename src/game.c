@@ -2,6 +2,10 @@
 
 Texture2D *texassets(void) {
 	Texture2D *texture = malloc(TEXTR * sizeof(Texture2D));
+	if (texture == NULL) {
+		perror(PROGRAM);
+		exit(EXIT_FAILURE);
+	}
 	texture[0]  = LoadTexture("resources/gold.png");
 	texture[1]  = LoadTexture("resources/agent.png");
 	texture[2]  = LoadTexture("resources/ghost.png");
@@ -20,6 +24,10 @@ Texture2D *texassets(void) {
 
 Rectangle *drawArray(int x) {
 	Rectangle *array = malloc(QUAD * sizeof(Rectangle));
+	if (array == NULL) {
+		perror(PROGRAM);
+		exit(EXIT_FAILURE);
+	}
 	for (int i = 0; i < QUAD; i++) {
 		array[i].x =  x + 32*(i%WCOL); // separar: '+ px*(i%WCOL)'
 		array[i].y = 60 + 32*(i/WCOL);
