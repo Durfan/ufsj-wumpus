@@ -1,62 +1,63 @@
 #include "main.h"
 
-List *iniLst(void) {
-	List *list = malloc(sizeof(List));
-	if (list == NULL) {
-		perror(PROGRAM);
-		exit(EXIT_FAILURE);
-	}
-	list->size = 0;
-	list->head = NULL;
-	return list;
+Sensor scanQuad(Agent *agent, Quad *wquad) {
+	int coord = agent->coord;
+	Sensor sensor;
+	sensor.smell = wquad[coord].smell;
+	sensor.wind  = wquad[coord].wind;
+	sensor.gold  = wquad[coord].gold;
+
+	return sensor;
 }
 
-int lstidx(List *list, int index) {
-	if (index >= 0 && index < list->size) {
-		Node *node = list->head;
-		for (int i=0; i<index; i++)
-			node = node->next;
-		return node->key;
-	}
-	return -1;
+int scanCord(Agent *agent) {
+	return agent->coord;
 }
 
-void pshLst(List *list, int key) {
-	Node *node = malloc(sizeof(Node));
-	if (node == NULL) {
-		perror(PROGRAM);
-		exit(EXIT_FAILURE);
+void scanPath(Agent *agent, int **world, int **know, Know *aquad) {
+	int coord = agent->coord;
+	if (aquad[coord].visit) return;
+
+	for (int i=0; i < QUAD; i++) {
+		if (world[coord][i]) {
+			know[coord][i] = know[i][coord] = 1;
+			aquad[coord].paths++;
+		}
 	}
-	node->key = key;
-	node->next = list->head;
-	list->head = node;
-	list->size++;
 }
 
-void prtLst(List *list) {
-	if (lstnil(list)) return;
-	Node *ptr = list->head;
-	while (ptr != NULL) {
-		printf (" %02d", ptr->key);
-		ptr = ptr->next;
+int scanLimt(Agent *agent, Know *aquad) {
+	int coord = agent->coord;
+	if (aquad[coord].paths == 4) {
+		agent->limit = false;
+		return 0;
 	}
-	putchar(0x0A);
+	agent->limit = true;
+	return 1;
 }
 
-void clrLst(List *list) {
-	if (list->head == NULL) {
-		free(list);
-		return;
+int scanShout(Agent *agent, Quad *wquad){
+	for(int i = 0; i < QUAD; i++){
+		if(wquad[i].ghost == true){
+		 	agent->grito = false;
+			return 0;
+		}
 	}
-	Node *delNode;
-	while (list->head != NULL) {
-		delNode = list->head;
-		list->head = list->head->next;
-		free(delNode);
-	}
-	free(list);
+	agent->grito = true;
+	return 1;
 }
 
-int lstnil(List *list) {
-	return (list->head == NULL);
+int getVgrau(int **array, int v) {
+	int grau = 0;
+	for (int i=0; i < QUAD; i++)
+		if (array[v][i])
+			grau++;
+	return grau;
+}
+
+void showInfos(Sensor sensor) {
+	if (sensor.gold)
+		DrawText("OURO!!!",100,35,10,ORANGE);
+	else if (sensor.smell || sensor.wind)
+		DrawText("PERIGO!",100,35,10,RED);
 }
