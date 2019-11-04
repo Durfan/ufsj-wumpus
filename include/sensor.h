@@ -6,6 +6,7 @@ int scanCord(Agent *agent);
 void scanPath(Agent *agent, int **world, int **know, Know *aquad);
 int scanLimt(Agent *agent,  Know *aquad);
 int getVgrau(int **array, int v);
+int scanShout(Agent *agent, Quad *wquad);
 
 void showInfos(Sensor sensor);
 
