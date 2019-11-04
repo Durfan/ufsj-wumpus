@@ -36,6 +36,17 @@ int scanLimt(Agent *agent, Know *aquad) {
 	return 1;
 }
 
+int scanShout(Agent *agent, Quad *wquad){
+	for(int i = 0; i < QUAD; i++){
+		if(wquad[i].ghost == true){
+		 	agent->grito = false;
+			return 0;
+		}
+	}
+	agent->grito = true;
+	return 1;
+}
+
 int getVgrau(int **array, int v) {
 	int grau = 0;
 	for (int i=0; i < QUAD; i++)
