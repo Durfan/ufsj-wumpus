@@ -3,7 +3,7 @@
 List *iniLst(void) {
 	List *list = malloc(sizeof(List));
 	if (list == NULL) {
-		perror(PROGRAM);
+		perror(PROJECT_NAME);
 		exit(EXIT_FAILURE);
 	}
 	list->size = 0;
@@ -56,7 +56,7 @@ int lstidR(List *list, int index) {
 void pshLst(List *list, int key) {
 	Node *node = malloc(sizeof(Node));
 	if (node == NULL) {
-		perror(PROGRAM);
+		perror(PROJECT_NAME);
 		exit(EXIT_FAILURE);
 	}
 	node->key = key;

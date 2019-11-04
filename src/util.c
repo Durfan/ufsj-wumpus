@@ -3,13 +3,13 @@
 int **alocArray(int n, int m) {
 	int **array = calloc(n,sizeof(int*));
 	if (array == NULL) {
-		perror(PROGRAM);
+		perror(PROJECT_NAME);
 		exit(EXIT_FAILURE);
 	}
 	for (int i=0; i < n; i++) {
 		array[i] = calloc(m,sizeof(int));
 		if (array[i] == NULL) {
-			perror(PROGRAM);
+			perror(PROJECT_NAME);
 			exit(EXIT_FAILURE);
 		}
 	}

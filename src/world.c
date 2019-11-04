@@ -3,7 +3,7 @@
 Quad *iniQuad(void) {
 	Quad *quad = malloc(QUAD * sizeof(Quad));
 	if (quad == NULL) {
-		perror(PROGRAM);
+		perror(PROJECT_NAME);
 		exit(EXIT_FAILURE);
 	}
 
@@ -21,7 +21,7 @@ Quad *iniQuad(void) {
 Know *iniKnow(void) {
 	Know *quad = malloc(QUAD * sizeof(Know));
 	if (quad == NULL) {
-		perror(PROGRAM);
+		perror(PROJECT_NAME);
 		exit(EXIT_FAILURE);
 	}
 

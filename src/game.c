@@ -3,7 +3,7 @@
 Texture2D *texassets(void) {
 	Texture2D *texture = malloc(TEXTR * sizeof(Texture2D));
 	if (texture == NULL) {
-		perror(PROGRAM);
+		perror(PROJECT_NAME);
 		exit(EXIT_FAILURE);
 	}
 	texture[0]  = LoadTexture("resources/gold.png");
@@ -25,7 +25,7 @@ Texture2D *texassets(void) {
 Rectangle *drawArray(int x) {
 	Rectangle *array = malloc(QUAD * sizeof(Rectangle));
 	if (array == NULL) {
-		perror(PROGRAM);
+		perror(PROJECT_NAME);
 		exit(EXIT_FAILURE);
 	}
 	for (int i = 0; i < QUAD; i++) {

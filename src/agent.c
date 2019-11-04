@@ -3,7 +3,7 @@
 Agent *iniAgent(void) {
 	Agent *agent = malloc(sizeof(Agent));
 	if (agent == NULL) {
-		perror(PROGRAM);
+		perror(PROJECT_NAME);
 		exit(EXIT_FAILURE);
 	}
 

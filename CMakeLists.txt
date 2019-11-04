@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11) # FetchContent is available in 3.11+
-project(wumpus VERSION 0.6.1)
+project(wumpus VERSION 0.6.2)
 
 # Set this to the minimal version you want to support
 find_package(raylib 2.5 QUIET) # Let CMake search for a raylib-config.cmake
@@ -56,5 +56,5 @@ file(GLOB all_SRCS
 )
 
 add_executable(${PROJECT_NAME} ${all_SRCS})
-set(raylib_VERBOSE 1)
+#set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

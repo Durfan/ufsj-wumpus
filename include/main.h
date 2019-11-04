@@ -1,8 +1,6 @@
 #ifndef INCLUDE_MAIN_H
 #define INCLUDE_MAIN_H
 
-#define PROGRAM "wumpus"
-
 #define QUAD 16 // World Size
 #define WROW 4
 #define WCOL 4

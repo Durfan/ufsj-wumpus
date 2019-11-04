@@ -1,8 +1,10 @@
 #ifndef INCLUDE_CONFIG_H
 #define INCLUDE_CONFIG_H
 
-#define wumpus_VERSION_MAJOR 0
-#define wumpus_VERSION_MINOR 6
-#define wumpus_VERSION_PATCH 1
+#define PROJECT_NAME "wumpus"
+#define PROJECT_VER  "0.6.2"
+#define PROJECT_VER_MAJOR 0
+#define PROJECT_VER_MINOR 6
+#define PTOJECT_VER_PATCH 2
 
 #endif // INCLUDE_CONFIG_H
