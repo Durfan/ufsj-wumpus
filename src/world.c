@@ -100,16 +100,10 @@ void genWorld(int **world, Quad *wquad) {
 }
 
 void prtwchar(bool cond, char *str) {
-	switch (cond) {
-	case true:
+	if (cond)
 		printf("%s", str);
-		break;
-	
-	default:
+	else
 		printf("\u2500");
-		break;
-	}
-
 }
 
 void prtWorld(Quad *quad) {
