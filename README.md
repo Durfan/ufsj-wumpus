@@ -18,3 +18,7 @@ make
 ## Dependências/libraries
 
 [![raylib](https://github.com/Durfan/ufsj-wumpus/blob/master/docs/logo_raylib.png)](https://github.com/raysan5/raylib)
+
+## Acknowledgments
+
+[DawnBringer](https://opengameart.org/content/dawnlike-16x16-universal-rogue-like-tileset-v181), That mad color-bending genius came up with the palette this entire pack lives on.
