@@ -1,2 +1,8 @@
+#ifndef INCLUDE_CONFIG_H
+#define INCLUDE_CONFIG_H
+
 #define wumpus_VERSION_MAJOR @wumpus_VERSION_MAJOR@
 #define wumpus_VERSION_MINOR @wumpus_VERSION_MINOR@
+#define wumpus_VERSION_PATCH @wumpus_VERSION_PATCH@
+
+#endif // INCLUDE_CONFIG_H

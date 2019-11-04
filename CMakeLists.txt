@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11) # FetchContent is available in 3.11+
-project(wumpus VERSION 0.5)
+project(wumpus VERSION 0.6.1)
 
 # Set this to the minimal version you want to support
 find_package(raylib 2.5 QUIET) # Let CMake search for a raylib-config.cmake
@@ -33,9 +33,17 @@ endif()
 
 set(CMAKE_C_STANDARD 99)
 
+if (MSVC)
+  # warning level 4 and all warnings as errors
+  add_compile_options(/W4 /WX)
+else()
+  # lots of warnings and all warnings as errors
+  add_compile_options(-Wall -Wextra -pedantic -Werror)
+endif()
+
 file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
 
-#configure_file(Config.h.in Config.h)
+configure_file(${PROJECT_SOURCE_DIR}/include/Config.h.in ${PROJECT_SOURCE_DIR}/include/Config.h)
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include

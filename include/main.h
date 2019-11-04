@@ -16,6 +16,7 @@
 #include <errno.h>
 #include "raylib.h"
 
+#include "Config.h"
 #include "structs.h"
 #include "game.h"
 #include "linkedlst.h"

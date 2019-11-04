@@ -1,7 +1,7 @@
 #include "main.h"
 
 int main(void) {
-
+	
 	setlocale(LC_ALL,"");
 	//SetConfigFlags(FLAG_SHOW_LOGO);
 
