@@ -1,7 +1,7 @@
 #include "main.h"
 
 int main(void) {
-	
+
 	setlocale(LC_ALL,"");
 	//SetConfigFlags(FLAG_SHOW_LOGO);
 
@@ -10,7 +10,7 @@ int main(void) {
 
 	Image icon = LoadImage("resources/icon.png");
 	SetWindowIcon(icon);
-	
+
 	Music music = LoadMusicStream("resources/snd_mgear.ogg");
 	Sound dead  = LoadSound("resources/snd_scream.ogg");
 	PlayMusicStream(music);
@@ -49,9 +49,9 @@ int main(void) {
 	prtAdjac(world);
 	#endif
 
-	List *route = iniLst();
+//	List *route = iniLst();
 	List *stateList = iniLst();
-	iniSttes(stateList);
+//	iniSttes(stateList);
 
 	// Main game loop
 	while (!WindowShouldClose()) {
@@ -102,12 +102,14 @@ int main(void) {
 		if (IsKeyPressed(KEY_R)) {
 			time = 0;
 			rstWorld(world,know,agent,wquad,aquad);
-			iniSttes(stateList);
+			clrLst(stateList);
+			stateList = iniLst();
 			PlayMusicStream(music);
 		}
 
 		if (IsKeyPressed(KEY_SPACE))
-			route = vitor(agent,aquad,world,stateList,route,wquad);
+		//	route = vitor(agent,aquad,world,stateList,route,wquad);
+			vitor(agent, aquad, stateList, wquad);
 
 		manual(agent);
 
@@ -186,7 +188,7 @@ int main(void) {
 	// De-Initialization
 	freeArray(QUAD,world);
 	freeArray(QUAD,know);
-	clrLst(route);
+//	clrLst(route);
 	clrLst(stateList);
 	free(wquad);
 	free(wquads);
