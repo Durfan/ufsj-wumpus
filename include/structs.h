@@ -11,6 +11,7 @@ typedef struct agent_t {
 	bool arrow;
 	bool grito;
 	bool limit;
+	int killerTarget;
 } Agent;
 
 typedef struct quad_t {
