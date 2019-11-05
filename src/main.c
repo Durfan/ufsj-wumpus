@@ -107,7 +107,7 @@ int main(void) {
 		}
 
 		if (IsKeyPressed(KEY_SPACE))
-			route = vitor(agent,aquad,world,stateList,route);
+			route = vitor(agent,aquad,world,stateList,route,wquad);
 
 		manual(agent);
 
