@@ -49,9 +49,7 @@ int main(void) {
 	prtAdjac(world);
 	#endif
 
-//	List *route = iniLst();
 	List *stateList = iniLst();
-//	iniSttes(stateList);
 
 	// Main game loop
 	while (!WindowShouldClose()) {
@@ -108,8 +106,7 @@ int main(void) {
 		}
 
 		if (IsKeyPressed(KEY_SPACE))
-		//	route = vitor(agent,aquad,world,stateList,route,wquad);
-			vitor(agent, aquad, stateList, wquad);
+			vitor(agent,aquad,stateList,wquad);
 
 		manual(agent);
 
@@ -188,7 +185,6 @@ int main(void) {
 	// De-Initialization
 	freeArray(QUAD,world);
 	freeArray(QUAD,know);
-//	clrLst(route);
 	clrLst(stateList);
 	free(wquad);
 	free(wquads);
