@@ -42,7 +42,7 @@ int main(void) {
 	genWorld(world,wquad);
 
 	int posagent;
-	float time;
+	float time = 0.0;
 
 	#ifdef DEBUG
 	prtGraph(world);
@@ -107,7 +107,7 @@ int main(void) {
 		}
 
 		if (IsKeyPressed(KEY_SPACE))
-			route = vitor(agent,aquad,world,stateList,route);
+			route = vitor(agent,aquad,world,stateList,route,wquad);
 
 		manual(agent);
 
