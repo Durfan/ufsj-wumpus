@@ -99,11 +99,18 @@ void genWorld(int **world, Quad *wquad) {
 	clrLst(exclude);
 }
 
+/*
 void prtwchar(bool cond, char *str) {
-	if (cond)
+	switch (cond) {
+	case true:
 		printf("%s", str);
-	else
+		break;
+
+	default:
 		printf("\u2500");
+		break;
+	}
+
 }
 
 void prtWorld(Quad *quad) {
@@ -122,7 +129,7 @@ void prtWorld(Quad *quad) {
 		}
 	}
 }
-
+*/
 void prtGraph(int **array) {
 	for (int i=0; i < QUAD; i++) {
 		printf(" %d:", i+1);
@@ -172,6 +179,6 @@ void rstWorld(int **world, int **know,
 	for (int i=0; i < QUAD; i++)
 		for (int j=0; j < QUAD; j++)
 			know[i][j] = 0;
-	
+
 	genWorld(world,wquad);
 }
