@@ -14,6 +14,7 @@ Agent *iniAgent(void) {
 	agent->arrow = 1;
 	agent->grito = false;
 	agent->limit = false;
+	agent->killerTarget = 0;
 
 	return agent;
 }
@@ -31,7 +32,7 @@ void ifengine(Agent *agent, Sensor sensor, Know *aquad, int **know) {
 
 	if (sensor.gold)
 		aquad[coord].gold = true;
-	
+
 	if (sensor.smell) {
 		aquad[coord].smell = true;
 		if (!agent->ghost) {
