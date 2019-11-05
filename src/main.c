@@ -42,7 +42,7 @@ int main(void) {
 	genWorld(world,wquad);
 
 	int posagent;
-	float time;
+	float time = 0.0;
 
 	#ifdef DEBUG
 	prtGraph(world);
