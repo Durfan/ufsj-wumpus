@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 void iniSttes(List *list) {
 	for (int i=1; i < WCOL; i++)
 		pshLst(list,i);
@@ -13,11 +14,13 @@ void iniSttes(List *list) {
 	}
 }
 
+
 int choiceInsecureTarget(Know *aquad) {
 	int target = bestSmell(aquad);
 	aquad[target].traps = nope;
 	return target;
 }
+
 
 void findVTargets(Agent *agent, Know *aquad, List *stateList) {
 	List *route = iniLst();
@@ -30,16 +33,17 @@ void findVTargets(Agent *agent, Know *aquad, List *stateList) {
 	}
 }
 
+
 int distStates(int x, int y) {
 	int dist = (x/WCOL-y/WCOL)*(x/WCOL-y/WCOL) + (x%WROW - y%WROW)*(x%WROW - y%WROW);
-	if(dist>0) return dist;
-	else return dist*(-1);
+    return dist;
 }
 
-List *findPosKillGhost(Agent *agent, Know *aquad, int target, List *route) {
+
+int findPosKillGhost(Agent *agent, Know *aquad, int target) {
 	int targetCol = target % WCOL, position, bestDist = 1000, bestPos = -1;
 	int targetRow = (int)(target / WCOL);
-
+	List *route;
 	for (int i = 0; i < WROW; i++) {
 		position = i*WCOL + targetCol;
 		if (position != targetCol) {
@@ -66,19 +70,17 @@ List *findPosKillGhost(Agent *agent, Know *aquad, int target, List *route) {
 			clrLst(route);
 		}
 	}
-	if(bestPos == agent->coord){
-		pshLst(route, bestPos);
-	}
-	else if (bestPos != -1) route = BSF(aquad, agent, bestPos);
-	else route = iniLst();
-	return route;
+
+	return bestPos;
 }
+
 
 int getStateGhost(Know *aquad) {
 	for (int i = 0; i < QUAD; i++)
 		if (aquad[i].ghost == certeza) return i;
 	return -1;
 }
+
 
 int bestMaybGhost(Know *aquad, int *posGhost) {
 	List *adjCandidates = iniLst();
@@ -92,7 +94,7 @@ int bestMaybGhost(Know *aquad, int *posGhost) {
 			prob = 0.0;
 
 			for (int j=0; j < numAdj; j++) {
-				candidate = lstidR(adjCandidates,0);
+				candidate = lstidR(adjCandidates, 0);
 				if (aquad[candidate].smell == true)
 					prob += 1.0;
 				else if (!aquad[candidate].visit)
@@ -113,10 +115,9 @@ int bestMaybGhost(Know *aquad, int *posGhost) {
 	return bestCandidate;
 }
 
+
 int ArrowMoviment(Quad *wquad, int coord, int target, int sum, Know *aquad, int t) {
-	printf("\nArrow goes through the states: ");
 	for (int i=coord; i < target; i++) {
-		printf("[%d]", t);
 		if (wquad[t].ghost) {
 			wquad[t].ghost = false;
 			aquad[t].ghost = nope;
@@ -135,6 +136,7 @@ int ArrowMoviment(Quad *wquad, int coord, int target, int sum, Know *aquad, int 
 	}
 	return 0;
 }
+
 
 int killWithAtack(Agent *agent, int target, Quad *wquad, Know *aquad) {
 	int kill = 0;
@@ -185,7 +187,7 @@ int choiceSafeTarget(Agent *agent, Know *aquad){
 int choiceGhostTarget(Know *aquad){
 	int target = -1;
 	target = getStateGhost(aquad);
-	if(target == -1) bestMaybGhost(aquad, &target);
+	if(target < 0) target = bestMaybGhost(aquad, &target);
 	return target;
 }
 
@@ -193,35 +195,46 @@ int choiceGhostTarget(Know *aquad){
 void agentCalcRouteMov(Agent *agent, List *stateList, int target, Know *aquad){
 	clrLst(stateList);
 	stateList = BSF(aquad, agent, target);
-	int x = lstidR(stateList,0);
+	int x = lstidR(stateList, 0);
 	if(x >= 0){
 		move(agent, x);
 		agent->score -=1;
 	}
 }
 
+
+void agentAtack(Agent *agent, Quad *wquad, Know* aquad){
+	if (killWithAtack(agent,agent->killerTarget,wquad,aquad))
+		agent->grito = true;
+	agent->arrow = false;
+	agent->killerTarget = 0;
+	agent->score -= 1;
+}
+
+
 void vitor(Agent *agent, Know *aquad, List *stateList, Quad *wquad){
-	int target = -1;;
+	int target = -1;
 	if(lstnil(stateList)){
 		target = choiceSafeTarget(agent, aquad);
 		if(target != -1){//explore mode
+			agent->explore = true;
 			agentCalcRouteMov(agent, stateList, target, aquad);
 		}else{// killer or crazy
 			if(agent->arrow){
 				target = choiceGhostTarget(aquad);
 				if(target != -1){// have path to ghost kill
 					agent->killerTarget = target;
-					agentCalcRouteMov(agent, stateList, target, aquad);
+					agent->killer = true;
+					target = findPosKillGhost(agent, aquad, target);
+					if(target != -1) agentCalcRouteMov(agent, stateList,target, aquad);
 					if(!stateList->size){// agent atack
-						if (killWithAtack(agent,agent->killerTarget,wquad,aquad))
-							agent->grito = true;
-						agent->arrow = false;
-						agent->killerTarget = 0;
-						agent->score -= 1;
+						agentAtack(agent, wquad, aquad);
+						agent->killer = false;
 					}
 				}else{// path to invalid ghost or fantasy does not exist in knowledge
 					target = choiceInsecureTarget(aquad);
 					if(target != -1){
+						agent->gotodie = true;
 						agentCalcRouteMov(agent, stateList, target, aquad);
 					}else{
 						printf("\nALL MAP WAS EXPLORED\n");
@@ -231,6 +244,8 @@ void vitor(Agent *agent, Know *aquad, List *stateList, Quad *wquad){
 			}else{
 				target = choiceInsecureTarget(aquad);
 				if(target != -1){
+					agent->gotodie = true;
+					agent->explore = false;
 					agentCalcRouteMov(agent, stateList, target, aquad);
 				}else{
 					printf("\nALL MAP WAS EXPLORED\n");
@@ -239,87 +254,18 @@ void vitor(Agent *agent, Know *aquad, List *stateList, Quad *wquad){
 			}
 		}
 	}else{// move mode
-		int x = lstidR(stateList,0);
+		int x = lstidR(stateList, 0);
 		if(x >= 0){
 			move(agent, x);
 			agent->score -=1;
 		}
 		if(agent->killerTarget && !stateList->size){
-			if (killWithAtack(agent,agent->killerTarget,wquad,aquad))
-				agent->grito = true;
-			agent->arrow = false;
-			agent->killerTarget = 0;
-			agent->score -= 1;
+			agentAtack(agent, wquad, aquad);
+			agent->killer = false;
 		}
 	}
 }
-/*
-List *vitor(Agent *agent, Know *aquad, int **world, List *stateList, List *route, Quad *wquad) {
-	int target, moveto;
 
-	if (agent->killerTarget) {
-		if (!lstnil(route)) {
-			moveto = lstidR(route,0);
-			move(agent,moveto);
-			agent->score -= 1;
-
-			if (!route->size) {
-				if (killWithAtack(agent, agent->killerTarget,wquad,aquad))
-					agent->grito = true;
-				agent->arrow = false;
-				agent->killerTarget = 0;
-				agent->score -= 1;
-			}
-		}
-	}
-	else if (!lstnil(route)) {
-		moveto = lstidR(route,0);
-		move(agent,moveto);
-		agent->score -= 1;
-
-	}
-	else if (!lstnil(stateList)) {// explore states
-		while (lstnil(route) && !lstnil(stateList)) {
-			target = lstidR(stateList,stateList->size-1);
-			route = BSF(aquad,agent,target);
-		}
-		if (!lstnil(route)) {
-			moveto = lstidR(route,0);
-			move(agent,moveto);
-			agent->score -= 1;
-		}
-
-	}
-	else {
-		findVTargets(agent,aquad,stateList); // find valide route;
-		if (!lstnil(stateList))
-			route = vitor(agent,aquad,world,stateList,route,wquad);
-		else { // if not valid path
-			if (agent->arrow) { // active killer mode?
-				int GhostPos = getStateGhost(aquad); // true ghost position
-
-				if (GhostPos == -1)
-					bestMaybGhost(aquad, &GhostPos); // maybe ghost position
-				clrLst(route);
-
-				if (GhostPos != -1)
-					route = findPosKillGhost(agent, aquad, GhostPos, route);// route to kill ghost
-
-				if (!lstnil(route)) { // active killer mode!
-					agent->killerTarget = GhostPos;
-					route = vitor(agent,aquad,world,stateList,route,wquad);
-				}
-				else { // active crazy mode - go to die
-					CrazyMode(aquad, stateList, &target);
-				}
-			}
-			else { // active crazy mode - go to die
-				CrazyMode(aquad, stateList, &target);
-			}
-		}
-	}
-	return route;
-}*/
 
 List *BSF(Know *aquad, Agent *agent, int target) {
 	List *route = iniLst();
@@ -339,14 +285,16 @@ List *BSF(Know *aquad, Agent *agent, int target) {
 
 	List *searchList = iniLst();
 	parents[coord] = coord;
-	pshLst(searchList, coord);
-
+//	pshLst(searchList, coord);
+	pshTailLst(searchList, coord);
 	while (!lstnil(searchList)) {
-		candidate = lstidR(searchList,searchList->size-1);
-
+//		candidate = lstidR(searchList, searchList->size-1);
+ 		candidate = popLst(searchList);
 		if (candidate == target) {
 			genRoute(route,parents,coord,target);
 			clrLst(searchList);
+			printf("\nROTA\n");
+			prtLst(route);
 			return route;
 		}
 
@@ -354,18 +302,30 @@ List *BSF(Know *aquad, Agent *agent, int target) {
 		sizeList = searchList->size-1;
 
 		for (int i = 0; i < sizeList; i++) {
-			candidate = lstidR(searchList, sizeList - i);
+	//		candidate = lstidR(searchList, searchList->size-1);
+			candidate = popLst(searchList);
 			if (candidate == target) {
 				genRoute(route,parents,coord,target);
 				clrLst(searchList);
+				printf("\nROTA\n");
+				prtLst(route);
 				return route;
 			}
 		}
 	}
 
-	if (searchList)
+
+	if (searchList->size)
 		clrLst(searchList);
 	return route;
+}
+
+
+void addVNodeTail(List *list, Know *aquad, int state, int *visited, int *parents, int parent) {
+	if ((aquad[state].ghost == 0 && aquad[state].traps == 0) && !visited[state]) {
+		pshTailLst(list,state);
+		parents[state] = parent;
+	}
 }
 
 void adjNKnow(List *list, Know *aquad, int coord, int *visited, int *parents) {
@@ -380,12 +340,14 @@ void adjNKnow(List *list, Know *aquad, int coord, int *visited, int *parents) {
 		addVNode(list,aquad,coord+1,visited,parents,coord);
 }
 
+
 void addVNode(List *list, Know *aquad, int state, int *visited, int *parents, int parent) {
 	if ((aquad[state].ghost == 0 && aquad[state].traps == 0) && !visited[state]) {
 		pshLst(list,state);
 		parents[state] = parent;
 	}
 }
+
 
 void addAdjLt(List *list, int coord) {
 	if (coord / WCOL != 0 && (coord / WCOL ) < 3)
@@ -398,12 +360,14 @@ void addAdjLt(List *list, int coord) {
 		pshLst(list,coord+1);
 }
 
+
 void genRoute(List *route, int *parents, int init, int target) {
 	do {
 		pshLst(route, target);
 		target = parents[target];
 	} while (target != init);
 }
+
 
 int bestSmell(Know *aquad) {
 	List *doh = iniLst();
@@ -418,7 +382,7 @@ int bestSmell(Know *aquad) {
 			prob = 0.0;
 
 			for (int j=0; j < numAdj; j++) {
-				candidate = lstidR(doh,0);
+				candidate = lstidR(doh, 0);
 				if (aquad[candidate].wind == true)
 					prob += 1.0;
 				else if (!aquad[candidate].visit)
@@ -433,4 +397,99 @@ int bestSmell(Know *aquad) {
 	}
 	clrLst(doh);
 	return bestie;
+}
+
+
+bool killerMode(Agent *agent, Know *aquad, Quad *wquad, List *stateList){
+	int target = choiceGhostTarget(aquad);
+	printf("\n DENTRO KILLER MODE");
+	if(target != -1){// have path to ghost kill
+		agent->killerTarget = target;
+		target = findPosKillGhost(agent, aquad, target);
+		if(target != -1){
+			clrLst(stateList);
+			stateList = BSF(aquad, agent, target);
+		// agentCalcRouteMov(agent, stateList,target, aquad);
+	 	}
+		if(!stateList->size){// agent atack
+			agentAtack(agent, wquad, aquad);
+			agent->killer = false;
+			clrLst(stateList);
+			stateList = BSF(aquad, agent,agent->killerTarget);
+			return true;
+		}else{
+			agent->gotox = true;
+		}
+	}else{
+		agent->gotodie = true;
+		agent->killer = false;
+	}
+	return false;
+}
+
+
+bool gotoxMode(Agent *agent, Know *aquad, Quad *wquad, List *stateList){
+	if(!lstnil(stateList)){
+		int x = popLst(stateList);
+		if(x >= 0){
+			move(agent, x);
+			return true;
+		}
+		if(agent->killerTarget && !stateList->size){
+			agentAtack(agent, wquad, aquad);
+			agent->killer = false;
+			agent->explore = true;
+			return true;
+		}
+	}else{
+		agent->gotox = false;
+	}
+	return false;
+}
+
+
+bool gotodieMode(Agent *agent, Know *aquad, List *stateList){
+	int target = choiceInsecureTarget(aquad);
+	//agent->gotodie = false;
+	if(!agent->explore){
+		if(target != -1){
+			clrLst(stateList);
+			stateList = BSF(aquad, agent, target);
+	//		agentCalcRouteMov(agent, stateList, target, aquad);
+			agent->gotox = true;
+			agent->explore = true;
+			return true;
+		}else{
+			agent->gotodie = false;
+			printf("\nALL MAP WAS EXPLORED\n");
+		}
+	}else{
+		agent->gotodie = false;
+	}
+	return false;
+}
+
+bool exploreMode(Agent *agent, Know *aquad, List *stateList, Quad *wquad){
+	int target;
+ 	if(lstnil(stateList)){
+		target = choiceSafeTarget(agent, aquad);
+		if(target != -1){//explore mode
+			agent->explore = true;
+			clrLst(stateList);
+			stateList = BSF(aquad, agent, target);
+			return true;
+		}else{
+			if(agent->arrow){
+				killerMode(agent, aquad, wquad, stateList);
+				agent->killer = true;
+			}
+			agent->explore = false;
+			agent->gotox = false;
+			gotodieMode(agent, aquad, stateList);
+			return false;
+		}
+	}else{
+		gotoxMode(agent, aquad, wquad, stateList);
+	}
+	return false;
 }
