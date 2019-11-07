@@ -8,16 +8,18 @@ typedef struct node_t {
 
 typedef struct list_t {
 	int size;
-	struct node_t *head;
+	struct node_t *head, *tail;
 } List;
 
 List *iniLst(void);
 int lstidx(List *list, int index);
 int lstidR(List *list, int index);
+int popLst(List *list);
 void pshLst(List *list, int key);
 void prtLst(List *list);
 void clrLst(List *list);
 int lstnil(List *list);
+void pshTailLst(List *list, int key);
 
 //#pragma message __FILE__
 #endif // INCLUDE_LINKEDLST_H
