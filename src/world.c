@@ -160,6 +160,7 @@ void rstWorld(int **world, int **know,
 	agent->arrow = 1;
 	agent->grito = false;
 	agent->limit = false;
+	agent->state = explore;
 
 	for (int i=0; i < QUAD; i++) {
 		wquad[i].ghost = false;
