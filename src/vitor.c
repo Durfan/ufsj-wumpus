@@ -217,24 +217,23 @@ void vitor(Agent *agent, Know *aquad, List *stateList, Quad *wquad){
 	if(lstnil(stateList)){
 		target = choiceSafeTarget(agent, aquad);
 		if(target != -1){//explore mode
-			agent->explore = true;
+			agent->state = explore;
 			agentCalcRouteMov(agent, stateList, target, aquad);
 		}else{// killer or crazy
 			if(agent->arrow){
 				target = choiceGhostTarget(aquad);
 				if(target != -1){// have path to ghost kill
 					agent->killerTarget = target;
-					agent->killer = true;
+					agent->state = killer;
 					target = findPosKillGhost(agent, aquad, target);
 					if(target != -1) agentCalcRouteMov(agent, stateList,target, aquad);
 					if(!stateList->size){// agent atack
 						agentAtack(agent, wquad, aquad);
-						agent->killer = false;
 					}
 				}else{// path to invalid ghost or fantasy does not exist in knowledge
 					target = choiceInsecureTarget(aquad);
 					if(target != -1){
-						agent->gotodie = true;
+						agent->state = gotodie;
 						agentCalcRouteMov(agent, stateList, target, aquad);
 					}else{
 						printf("\nALL MAP WAS EXPLORED\n");
@@ -244,8 +243,7 @@ void vitor(Agent *agent, Know *aquad, List *stateList, Quad *wquad){
 			}else{
 				target = choiceInsecureTarget(aquad);
 				if(target != -1){
-					agent->gotodie = true;
-					agent->explore = false;
+					agent->state = gotodie;
 					agentCalcRouteMov(agent, stateList, target, aquad);
 				}else{
 					printf("\nALL MAP WAS EXPLORED\n");
@@ -261,7 +259,6 @@ void vitor(Agent *agent, Know *aquad, List *stateList, Quad *wquad){
 		}
 		if(agent->killerTarget && !stateList->size){
 			agentAtack(agent, wquad, aquad);
-			agent->killer = false;
 		}
 	}
 }
@@ -320,13 +317,6 @@ List *BSF(Know *aquad, Agent *agent, int target) {
 	return route;
 }
 
-
-void addVNodeTail(List *list, Know *aquad, int state, int *visited, int *parents, int parent) {
-	if ((aquad[state].ghost == 0 && aquad[state].traps == 0) && !visited[state]) {
-		pshTailLst(list,state);
-		parents[state] = parent;
-	}
-}
 
 void adjNKnow(List *list, Know *aquad, int coord, int *visited, int *parents) {
 	visited[coord] = 1;
@@ -399,6 +389,15 @@ int bestSmell(Know *aquad) {
 	return bestie;
 }
 
+
+// REFACTORING DECISION SYSTEM - IN PROCESS
+/*
+void addVNodeTail(List *list, Know *aquad, int state, int *visited, int *parents, int parent) {
+	if ((aquad[state].ghost == 0 && aquad[state].traps == 0) && !visited[state]) {
+		pshTailLst(list,state);
+		parents[state] = parent;
+	}
+}
 
 bool killerMode(Agent *agent, Know *aquad, Quad *wquad, List *stateList){
 	int target = choiceGhostTarget(aquad);
@@ -493,3 +492,4 @@ bool exploreMode(Agent *agent, Know *aquad, List *stateList, Quad *wquad){
 	}
 	return false;
 }
+*/
