@@ -11,13 +11,15 @@ void genRoute(List *route, int *parents, int init, int target);
 int bestSmell(Know *aquad);
 void CrazyMode(Know *aquad, List *stateList, int *target);
 void findVTargets(Agent *agent, Know *aquad, List *stateList);
-List* findPosKillGhost(Agent *agent, Know *aquad, int target, List *route);
+int findPosKillGhost(Agent *agent, Know *aquad, int target);
 int getStateGhost(Know *aquad);
 int bestMaybGhost(Know *aquad, int *posGhost);
 int ArrowMoviment(Quad *wquad, int coord, int target, int sum, Know *aquad, int t);
 int killWithAtack(Agent *agent, int target, Quad *wquad, Know *aquad);
 int distStates(int x, int y);
 void vitor(Agent *agent, Know *aquad, List *stateList, Quad *wquad);
+void vitor2(Agent *agent, Know *aquad, List *stateList, Quad *wquad);
+bool exploreMode(Agent *agent, Know *aquad,List *stateList, Quad *wquad);
+
 //#pragma message __FILE__
 #endif // INCLUDE_VITOR_H
-
