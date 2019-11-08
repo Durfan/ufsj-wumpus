@@ -2,6 +2,7 @@
 #define INCLUDE_STRUCTS_H
 
 typedef enum { talvez=-1, nope, certeza, noinf } TriBol;
+typedef enum { explore = -1, killer, gotodie} Intern;
 
 typedef struct agent_t {
 	int coord;
@@ -12,6 +13,9 @@ typedef struct agent_t {
 	bool grito;
 	bool limit;
 	int killerTarget;
+
+	Intern state;
+
 } Agent;
 
 typedef struct quad_t {

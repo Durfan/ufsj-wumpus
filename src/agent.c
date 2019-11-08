@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 Agent *iniAgent(void) {
 	Agent *agent = malloc(sizeof(Agent));
 	if (agent == NULL) {
@@ -15,6 +16,8 @@ Agent *iniAgent(void) {
 	agent->grito = false;
 	agent->limit = false;
 	agent->killerTarget = 0;
+
+	agent->state = explore;
 
 	return agent;
 }
@@ -125,6 +128,7 @@ void chktraps(Know *aquad, int **know) {
 }
 
 void move(Agent *agent, int quad) {
+	agent->score -= 1;
 	agent->coord = quad;
 }
 
