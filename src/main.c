@@ -105,11 +105,9 @@ int main(void) {
 			PlayMusicStream(music);
 		}
 
-		if (IsKeyPressed(KEY_SPACE)){
-		//	exploreMode(agent, aquad, stateList, wquad);
+		if (IsKeyPressed(KEY_SPACE))
 			vitor(agent,aquad,stateList,wquad);
-		}
-
+	
 		manual(agent);
 
 		// Draw
