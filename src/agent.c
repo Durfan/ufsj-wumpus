@@ -15,7 +15,6 @@ Agent *iniAgent(void) {
 	agent->arrow = 1;
 	agent->grito = false;
 	agent->limit = false;
-	agent->killerTarget = 0;
 
 	agent->state = explore;
 
