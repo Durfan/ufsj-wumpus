@@ -12,39 +12,6 @@ List *iniLst(void) {
 	return list;
 }
 
-int lstidR(List *list, int index) {
-	if (index >= 0 && index < list->size) {
-		Node *node = list->head;
-		int key;
-
-		if (list->head->next == NULL) {
-			list->head = NULL;
-			list->tail = NULL;
-			key = node->key;
-			free(node);
-		} else {
-			if (index == 0) {
-				key = node->key;
-				list->head = node->next;
-				free(node);
-			}
-			else {
-				Node *aux = list->head;
-				for (int i=0; i < index; i++) {
-					node = aux;
-					aux = node->next;
-				}
-				key = aux->key;
-				node->next = aux->next;
-				free(aux);
-			}
-		}
-		list->size--;
-		return key;
-	}
-	return -1;
-}
-
 int popLst(List *list) {
 	if (lstnil(list))
 		return -1;
