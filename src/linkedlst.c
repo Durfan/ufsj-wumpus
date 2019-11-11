@@ -57,7 +57,7 @@ int popLst(List *list) {
 		list->tail = NULL;
 
 	list->size--;
-	
+
 	free(node);
 	return key;
 }
@@ -124,6 +124,17 @@ void clrLst(List *list) {
 		free(delNode);
 	}
 	free(list);
+}
+
+void CLEARLst(List *list){
+	if(list->head == NULL) return;
+	Node *delNode;
+	while (list->head != NULL) {
+		delNode = list->head;
+		list->head = list->head->next;
+		free(delNode);
+	}
+	list->tail = NULL;
 }
 
 int lstnil(List *list) {
