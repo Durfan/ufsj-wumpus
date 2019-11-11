@@ -8,12 +8,13 @@ int choiceInsecureTarget(Know *aquad);
 int distStates(int x, int y);
 int findPosKillGhost(Agent *agent, Know *aquad, int target);
 int getStateGhost(Know *aquad);
-int bestMaybGhost(Know *aquad, int *posGhost);
+int bestMaybGhost(Know *aquad);
 int choiceSafeTarget(Agent *agent, Know *aquad);
 int choiceGhostTarget(Know *aquad);
 void agentAtack(Agent *agent, Quad *wquad, Know* aquad);
 void genRoute(List *route, int *parents, int init, int target);
-List *BSF(Know *aquad, Agent *agent, int target);
+int BSF(Know *aquad, Agent *agent, int target, List *route);
+
 bool xIsAdj(Agent *agent, int x);
 void addVNodeTail(List *list, Know *aquad, int state, int *visited, int *parents, int parent);
 void addAdjLt(List *list, int coord);
