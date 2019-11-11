@@ -214,13 +214,13 @@ bool xIsAdj(Agent *agent, int x){
 }
 
 void addAdjLt(List *list, int coord) {
-	if (coord / WCOL != 0 && (coord / WCOL ) < 3)
+	if (coord / WCOL != 0)
 		pshLst(list,coord+WCOL);
-	if (coord % WROW != 0 && (coord % WROW ) > 0)
+	if (coord % WROW != 0)
 		pshLst(list,coord-1);
-	if ((coord / WCOL != WCOL-1) && (coord / WCOL ) > 0)
+	if ((coord / WCOL != WCOL-1))
 		pshLst(list,coord-WCOL);
-	if ((coord % WROW != WROW-1) && (coord % WROW ) < 3)
+	if ((coord % WROW != WROW-1))
 		pshLst(list,coord+1);
 }
 
@@ -261,18 +261,18 @@ int bestTrapForDie(Know *aquad) {
 	return bestie;
 }
 
-bool killerMode(Agent *agent, Know *aquad, Quad *wquad, List *stateList){
+bool killerMode(Agent *agent, Know *aquad, Quad *wquad, List *routeList){
 	int target = choiceGhostTarget(aquad);
 	if(target != -1){// have path to ghost kill
 		agent->state = killer;
 		agent->ghost = target;
 		target = findPosKillGhost(agent, aquad, target);
 		if(target != -1){
-			BSF(aquad, agent, target, stateList);
+			BSF(aquad, agent, target, routeList);
 	 	}
-		if(!stateList->size){// agent atack
+		if(!routeList->size){// agent atack
 			agentAtack(agent, wquad, aquad);
-			BSF(aquad, agent,agent->ghost, stateList);
+			BSF(aquad, agent,agent->ghost, routeList);
 			agent->state = explore;
 		}
 		return true;
@@ -280,22 +280,24 @@ bool killerMode(Agent *agent, Know *aquad, Quad *wquad, List *stateList){
 	return false;
 }
 
-bool gotoxMode(Agent *agent, Know *aquad, Quad *wquad, List *stateList){
-	if(!lstnil(stateList)){
-		int x = popLst(stateList);
+// movimenta pela lista e ataca
+bool gotoxMode(Agent *agent, Know *aquad, Quad *wquad, List *routeList){
+	if(!lstnil(routeList)){
+		int x = popLst(routeList);
 		if(x >= 0) move(agent, x);
-		if(agent->state == killer && !stateList->size)
+		if(agent->state == killer && !routeList->size)
 			agentAtack(agent, wquad, aquad);
 		return true;
 	}
 	return false;
 }
 
-bool gotodieMode(Agent *agent, Know *aquad, List *stateList){
+// escolhe uma trap pra se matar e calcula a rota
+bool gotodieMode(Agent *agent, Know *aquad, List *routeList){
 	int target = choiceInsecureTarget(aquad);
-	if(lstnil(stateList)){
+	if(lstnil(routeList)){
 		if(target != -1){
-			BSF(aquad, agent, target, stateList);
+			BSF(aquad, agent, target, routeList);
 		}else
 			printf("\nALL MAP WAS EXPLORED\n");
 		return true;
@@ -303,29 +305,30 @@ bool gotodieMode(Agent *agent, Know *aquad, List *stateList){
 	return false;
 }
 
-bool exploreMode(Agent *agent, Know *aquad, List *stateList){
+// adiciona rota valida para um estado nao visitado
+bool exploreMode(Agent *agent, Know *aquad, List *routeList){
 	int target = choiceSafeTarget(agent, aquad);
 	if(target != -1){//explore mode
 		agent->state = explore;
-		BSF(aquad, agent, target, stateList);
+		BSF(aquad, agent, target, routeList);
 		return true;
 	}else{
 		return false;
 	}
 }
 
-void vitor(Agent *agent, Know *aquad, List *stateList, Quad *wquad){
+void vitor(Agent *agent, Know *aquad, List *routeList, Quad *wquad){
 	bool action = false;
-	while(!action){
-	 	if(lstnil(stateList)){
-			if(!exploreMode(agent, aquad, stateList)){
+	while(!action){// enquanto nenhuma ação ou decisão for tomada
+	 	if(lstnil(routeList)){// se nao tem rota
+			if(!exploreMode(agent, aquad, routeList)){// exploreMode return true se tem caminho seguro para algum estado não visitado
 				if(agent->arrow && agent->state != killer)
-					action = killerMode(agent, aquad, wquad, stateList);
+					action = killerMode(agent, aquad, wquad, routeList);
 				if(agent->state != killer)
-					action = gotodieMode(agent, aquad, stateList);
+					action = gotodieMode(agent, aquad, routeList);
 			}
-		}else{
-			action = gotoxMode(agent, aquad, wquad, stateList);
+		}else{// se tem rota, percorra.
+			action = gotoxMode(agent, aquad, wquad, routeList);
 		}
 	}
 }
