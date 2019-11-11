@@ -14,30 +14,30 @@ int distStates(int x, int y) {
 int findPosKillGhost(Agent *agent, Know *aquad, int target) {
 	if (xIsAdj(agent, target)) return agent->coord;
 
-	List *route;
+	List *route = iniLst();
 	int targetCol = target % WCOL, targetRow = (int)(target / WCOL), position, bestDist = 1000, bestPos = -1;
 
 	for (int i = 0; i < WROW; i++) {
 		position = i*WCOL + targetCol;
 		if (position != targetCol) {
-			route = BSF(aquad, agent, position);
+			BSF(aquad, agent, position, route);
 			if (!lstnil(route) && distStates(agent->coord, position) < bestDist) {
 				bestDist = distStates(agent->coord, position);
 				bestPos = position;
 			}
-			clrLst(route);
+			CLEARLst(route);
 		}
 	}
 
 	for (int i = 0; i < WCOL; i++) {
 		position = i + targetRow*WROW;
 		if (position != targetCol) {
-			route = BSF(aquad, agent, position);
+			BSF(aquad, agent, position, route);
 			if (!lstnil(route) && distStates(agent->coord, position) < bestDist) {
 				bestDist = distStates(agent->coord, position);
 				bestPos = position;
 			}
-			clrLst(route);
+			CLEARLst(route);
 		}
 	}
 	return bestPos;
@@ -49,7 +49,7 @@ int getStateGhost(Know *aquad) {
 	return -1;
 }
 
-int bestMaybGhost(Know *aquad, int *posGhost) {
+int bestMaybGhost(Know *aquad) {
 	List *adjCandidates = iniLst();
 	int numAdj, bestCandidate = -1, candidate;
 	float prob, bestProb = -1.0;
@@ -67,13 +67,13 @@ int bestMaybGhost(Know *aquad, int *posGhost) {
 				else if (!aquad[candidate].visit)
 					prob += 0.5;
 			}
+
 			if (prob == 0.0) prob = 0.00001;
 
 			prob = prob/(float)numAdj;
 			if (prob > bestProb) {
 				bestProb = prob;
 				bestCandidate = i;
-				*posGhost = i;
 			}
 		}
 	}
@@ -128,16 +128,16 @@ int AtackEffect(Agent *agent, int target, Quad *wquad, Know *aquad) {
 }
 
 int choiceSafeTarget(Agent *agent, Know *aquad){
-	List *route;
+	List *route = iniLst();
 	int bestDist = QUAD*QUAD, bestTarget = - 1;
 	for(int i = 1; i < QUAD; i++){
 		if(!aquad[i].visit){
-			route = BSF(aquad, agent, i);
+			BSF(aquad, agent, i, route);
 			if(!lstnil(route) && (distStates(agent->coord, i) < bestDist)){
 				bestDist = distStates(agent->coord, i);
 				bestTarget = i;
 			}
-			clrLst(route);
+			CLEARLst(route);
 		}
 	}
 	return bestTarget;
@@ -146,7 +146,7 @@ int choiceSafeTarget(Agent *agent, Know *aquad){
 int choiceGhostTarget(Know *aquad){
 	int target = -1;
 	target = getStateGhost(aquad);
-	if(target < 0) target = bestMaybGhost(aquad, &target);
+	if(target < 0) target = bestMaybGhost(aquad);
 	return target;
 }
 
@@ -159,17 +159,13 @@ void agentAtack(Agent *agent, Quad *wquad, Know* aquad){
 	agent->state = explore;
 }
 
-List *BSF(Know *aquad, Agent *agent, int target) {
-	List *route = iniLst();
-	int coord = agent->coord;
-	if (coord == target)
-		return route;
+int BSF(Know *aquad, Agent *agent, int target, List *route) {
+	if(lstnil(route)){
+		CLEARLst(route);
+	}
 
-	int candidate, sizeList;
+	int coord = agent->coord, candidate;
 	int visited[QUAD], parents[QUAD];
-
-	if (coord == target)
-		return route;
 
 	for (int i=0; i < QUAD; i++)
 		visited[i] = 0;
@@ -177,31 +173,18 @@ List *BSF(Know *aquad, Agent *agent, int target) {
 	List *searchList = iniLst();
 	parents[coord] = coord;
 	pshTailLst(searchList, coord);
+
 	while (!lstnil(searchList)) {
  		candidate = popLst(searchList);
 		if (candidate == target) {
 			genRoute(route,parents,coord,target);
 			clrLst(searchList);
-			return route;
+			return 1;
 		}
-
 		adjNKnow(searchList,aquad,candidate,visited,parents);
-		sizeList = searchList->size-1;
-
-		for (int i = 0; i < sizeList; i++) {
-			candidate = popLst(searchList);
-			if (candidate == target) {
-				genRoute(route,parents,coord,target);
-				clrLst(searchList);;
-				return route;
-			}
-			adjNKnow(searchList,aquad,candidate,visited,parents);
-		}
 	}
-
-	if (searchList->size)
-		clrLst(searchList);
-	return route;
+	clrLst(searchList);
+	return 0;
 }
 
 void addVNodeTail(List *list, Know *aquad, int state, int *visited, int *parents, int parent) {
@@ -285,13 +268,11 @@ bool killerMode(Agent *agent, Know *aquad, Quad *wquad, List *stateList){
 		agent->ghost = target;
 		target = findPosKillGhost(agent, aquad, target);
 		if(target != -1){
-			clrLst(stateList);
-			stateList = BSF(aquad, agent, target);
-	 	}else return false;
+			BSF(aquad, agent, target, stateList);
+	 	}
 		if(!stateList->size){// agent atack
 			agentAtack(agent, wquad, aquad);
-			clrLst(stateList);
-			stateList = BSF(aquad, agent,agent->ghost);
+			BSF(aquad, agent,agent->ghost, stateList);
 			agent->state = explore;
 		}
 		return true;
@@ -314,8 +295,7 @@ bool gotodieMode(Agent *agent, Know *aquad, List *stateList){
 	int target = choiceInsecureTarget(aquad);
 	if(lstnil(stateList)){
 		if(target != -1){
-			clrLst(stateList);
-			stateList = BSF(aquad, agent, target);
+			BSF(aquad, agent, target, stateList);
 		}else
 			printf("\nALL MAP WAS EXPLORED\n");
 		return true;
@@ -327,8 +307,7 @@ bool exploreMode(Agent *agent, Know *aquad, List *stateList){
 	int target = choiceSafeTarget(agent, aquad);
 	if(target != -1){//explore mode
 		agent->state = explore;
-		clrLst(stateList);
-		stateList = BSF(aquad, agent, target);
+		BSF(aquad, agent, target, stateList);
 		return true;
 	}else{
 		return false;
