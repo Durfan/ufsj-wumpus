@@ -19,6 +19,7 @@ void prtLst(List *list);
 void clrLst(List *list);
 int lstnil(List *list);
 void pshTailLst(List *list, int key);
+void CLEARLst(List *list);
 
 //#pragma message __FILE__
 #endif // INCLUDE_LINKEDLST_H
