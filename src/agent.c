@@ -127,7 +127,7 @@ void chktraps(Know *aquad, int **know) {
 }
 
 void move(Agent *agent, int quad) {
-	agent->score -= 1;
+	if(agent->coord != quad) agent->score -= 1;
 	agent->coord = quad;
 }
 
