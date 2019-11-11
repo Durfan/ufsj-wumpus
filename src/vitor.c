@@ -109,15 +109,18 @@ int AtackEffect(Agent *agent, int target, Quad *wquad, Know *aquad) {
 			if ((coord - target) < 0){ // sentido crescente
 				printf("\n**** ATACK - S\n");
 				kill = ArrowMoviment(wquad, agent->coord/WCOL, WCOL, 4, aquad, coord);
-			}else
+			}
+			else {
 				printf("\n**** ATACK - N\n");
 				kill = ArrowMoviment(wquad, 0, agent->coord/WCOL+1, -4, aquad, coord);
+			}
 			agent->arrow = false;
 		} else if ((target / WCOL) == (coord / WCOL)) { // mesma coluna
 			if ((coord - target) < 0){
 				printf("\n**** ATACK - L\n");
 				kill = ArrowMoviment(wquad, agent->coord%WCOL, WCOL, 1, aquad, coord);
-			}else{
+			}
+			else {
 				printf("\n**** ATACK - O\n");
 				kill = ArrowMoviment(wquad, 0, agent->coord%WCOL+1,-1, aquad, coord);
 			}

@@ -94,7 +94,8 @@ void clrLst(List *list) {
 }
 
 void CLEARLst(List *list){
-	if(list->head == NULL) return;
+	if (list->head == NULL)
+		return;
 	Node *delNode;
 	while (list->head != NULL) {
 		delNode = list->head;
